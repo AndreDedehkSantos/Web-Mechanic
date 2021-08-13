@@ -1,10 +1,16 @@
 <script>
+  import FooterBar from "../components/FooterBar.vue"
   export default {
+    components: {
+      FooterBar
+    },
     data() {
       return {
         logTipo: "Selecione",
         expanded: [],
         singleExpand: false,
+        clienteEdit: null,
+        editando: false,
         clientesHeaders: [
           { text: "Código", value: "id" },
           { text: "Nome", value: "nome" },
@@ -25,7 +31,8 @@
             enderecos: [
               {
                 id: 1,
-                tipo: "Casa",
+                tipoCasa: true,
+                tipoApartamento: false,
                 logradouro: "Ibiras Veles",
                 tipoLogradouro: "Avenida",
                 numero: "42",
@@ -50,7 +57,8 @@
             enderecos: [
               {
                 id: 1,
-                tipo: "Casa",
+                tipoCasa: true,
+                tipoApartamento: false,
                 logradouro: "João de Paulas",
                 tipoLogradouro: "Travessa",
                 numero: "51",
@@ -63,7 +71,8 @@
               },
               {
                 id: 2,
-                tipo: "Apartamento",
+                tipoCasa: false,
+                tipoApartamento: true,
                 logradouro: "Lourenço Baptista",
                 tipoLogradouro: "Rua",
                 numero: "137A",
@@ -76,7 +85,7 @@
               }
             ]
           },
-          /*{
+          {
             id: 3,
             nome: "Marcos de Holanda Kristenssen",
             genero: "Masculino",
@@ -88,7 +97,8 @@
             enderecos: [
               {
                 id: 1,
-                tipo: "Apartamento",
+                tipoCasa: false,
+                tipoApartamento: true,
                 logradouro: "Savino Mesquita",
                 tipoLogradouro: "Rua",
                 numero: "452",
@@ -113,7 +123,8 @@
             enderecos: [
               {
                 id: 1,
-                tipo: "Apartamento",
+                tipoCasa: false,
+                tipoApartamento: true,
                 logradouro: "Pimentel",
                 tipoLogradouro: "Avenida",
                 numero: "89",
@@ -125,7 +136,7 @@
                 cobranca: true,
               }
             ]
-          },*/
+          },
         ],
       };
     },
@@ -133,7 +144,7 @@
 </script>
 
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid" style="padding-bottom: 50px;">
     <div class="row" style="margin-top: 10px;">
       <div class="col-2"></div>
       <div class="col-8">
@@ -170,8 +181,11 @@
               <div v-for="endereco in item.enderecos" :key="endereco.id">
                 <hr>
                 <div class="row  cliente-detalhe">
-                  <div class="col-8">
-                    <b>Endereço {{endereco.id}} - ({{endereco.tipo}})</b>
+                  <div v-if="item.endereco.tipoApartamento" class="col-8">
+                    <b>Endereço {{endereco.id}} - (Apartamento)</b>
+                  </div>
+                   <div v-else class="col-8">
+                    <b>Endereço {{endereco.id}} - (Casa)</b>
                   </div>
                 </div>
                 <div class="row  cliente-detalhe">
@@ -209,7 +223,7 @@
               <div class="row  cliente-detalhe" style="margin-bottom: 8px;">
                 <div class="col-8"></div>
                 <div class="col-2">
-                  <button class="btn btn-edit">Editar Cliente</button>
+                  <button class="btn btn-edit" v-on-click="clienteEdit = item" onclick="window.location = '#editForm'">Editar Cliente</button>
                 </div>
                 <div class="col-2">
                   <button class="btn btn-delete">Inativar Cliente</button>
@@ -220,7 +234,7 @@
         </v-data-table>
       </div>
     </div>
-    <div class="container-fluid edit-container" style="margin-top: 30px;">
+    <div v-if="editando" class="container-fluid edit-container" id="editForm" style="margin-top: 30px;">
       <form>
         <div class="row">
           <div class="col-2"></div>
@@ -263,32 +277,122 @@
         <div class="row">
           <div class="col-2"></div>
           <div class="col-1">
-            <label class="form-label">&nbsp;</label>
-            <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">{{this.logTipo}}</button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="#">Rua</a></li>
-                <li><a class="dropdown-item" href="#">Avenida</a></li>
-                <li><a class="dropdown-item" href="#">Travessa</a></li>
-                <li><a class="dropdown-item" href="#">Rodovia</a></li>
-                <li><a class="dropdown-item" href="#">Alameda</a></li>
-                <li><a class="dropdown-item" href="#">Estrada</a></li>
-                <li><a class="dropdown-item" href="#">Sítio</a></li>
-                <li><a class="dropdown-item" href="#">Viela</a></li>
-              </ul>
-            </div>
+            <b>Endereço</b>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-1">
+            <label class="form-label">Logradouro</label>
+            <b-dropdown v-model="clienteEdit.endereco.tipoLogradouro" text="selecione">
+              <b-dropdown-item>Rua</b-dropdown-item>
+              <b-dropdown-item>Avenida</b-dropdown-item>
+              <b-dropdown-item>Travessa</b-dropdown-item>
+              <b-dropdown-item>Estrada</b-dropdown-item>
+              <b-dropdown-item>Alameda</b-dropdown-item>
+              <b-dropdown-item>Rodovia</b-dropdown-item>
+              <b-dropdown-item>Viela</b-dropdown-item>
+            </b-dropdown>
           </div>
           <div class="col-6">
-            <label class="form-label">Logradouro</label>
-            <input type="text" class="form-control">
+            <label class="form-label">&nbsp;</label>
+            <input :v-model="clienteEdit.endereco.logradouro" type="text" class="form-control">
           </div>
           <div class="col-1">
             <label class="form-label">Número</label>
-            <input type="text" class="form-control">
+            <input :v-model="clienteEdit.endereco.numero" type="text" class="form-control">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-4">
+            <label class="form-label">Complemento</label>
+            <input :v-model="clienteEdit.endereco.complemento" type="text" class="form-control">
+          </div>
+          <div class="col-3">
+            <label class="form-label">Cidade</label>
+            <input :v-model="clienteEdit.endereco.cidade" type="text" class="form-control">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-1">
+            <label class="form-label">UF</label>
+            <b-dropdown :v-model="clienteEdit.endereco.uf" text="selecione">
+              <b-dropdown-item>AC</b-dropdown-item>
+              <b-dropdown-item>AL</b-dropdown-item>
+              <b-dropdown-item>AP</b-dropdown-item>
+              <b-dropdown-item>AM</b-dropdown-item>
+              <b-dropdown-item>BA</b-dropdown-item>
+              <b-dropdown-item>CE</b-dropdown-item>
+              <b-dropdown-item>DF</b-dropdown-item>
+              <b-dropdown-item>ES</b-dropdown-item>
+              <b-dropdown-item>GO</b-dropdown-item>
+              <b-dropdown-item>MA</b-dropdown-item>
+              <b-dropdown-item>MT</b-dropdown-item>
+              <b-dropdown-item>MS</b-dropdown-item>
+              <b-dropdown-item>MG</b-dropdown-item>
+              <b-dropdown-item>PA</b-dropdown-item>
+              <b-dropdown-item>PB</b-dropdown-item>
+              <b-dropdown-item>PR</b-dropdown-item>
+              <b-dropdown-item>PE</b-dropdown-item>
+              <b-dropdown-item>PI</b-dropdown-item>
+              <b-dropdown-item>RJ</b-dropdown-item>
+              <b-dropdown-item>RN</b-dropdown-item>
+              <b-dropdown-item>RS</b-dropdown-item>
+              <b-dropdown-item>RO</b-dropdown-item>
+              <b-dropdown-item>RR</b-dropdown-item>
+              <b-dropdown-item>SC</b-dropdown-item>
+              <b-dropdown-item>SP</b-dropdown-item>
+              <b-dropdown-item>SE</b-dropdown-item>
+              <b-dropdown-item>TO</b-dropdown-item>
+            </b-dropdown>
+          </div>
+          <div class="col-2">
+            <label class="form-label">CEP</label>
+            <input :v-model="clienteEdit.endereco.cep" type="text" class="form-control">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="form-check" style="margin-left: 10px;">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Casa
+            </label>
+          </div>
+          <div class="form-check" style="margin-left: 10px;">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+            <label class="form-check-label" for="flexRadioDefault2">
+              Apartamento
+            </label>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="form-check" style="margin-left: 10px;">
+            <input v-model="clienteEdit.enderecos" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Endereço de Cobrança
+            </label>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-7"></div>
+          <div class="col-2">
+            <button class="btn btn-edit"><small>Novo Endereço</small></button>
           </div>
         </div>
       </form>
     </div>
+    <FooterBar/>
   </div>
 </template>
 
