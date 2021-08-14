@@ -11,12 +11,16 @@
         singleExpand: false,
         clienteEdit: null,
         editando: false,
+        confrimSenha: null,
+        quantidadeEndereco: 0,
         clientesHeaders: [
           { text: "Código", value: "id" },
           { text: "Nome", value: "nome" },
           { text: "CPF", value: "cpf" },
           { text: "Data de Nascimento", value: "dataNasc" },
           { text: "Gênero", value: "genero" },
+          { text: "Ranking", value: "ranking"},
+          { text: "Status", value: "status"}
         ],
         clientes: [
           {
@@ -28,11 +32,12 @@
             telefone: "11 964123267 (celular)",
             email: "jcarlossampaio@yahoo.com.br",
             senha: "admin123",
+            ranking: 4,
+            status: "Ativo",
             enderecos: [
               {
                 id: 1,
-                tipoCasa: true,
-                tipoApartamento: false,
+                tipo: "Casa",
                 logradouro: "Ibiras Veles",
                 tipoLogradouro: "Avenida",
                 numero: "42",
@@ -54,11 +59,12 @@
             telefone: "58 954120369 (celular)",
             email: "helena.castro83@outlook.com",
             senha: "helecas76@83",
+            ranking: 8,
+            status: "Ativo",
             enderecos: [
               {
                 id: 1,
-                tipoCasa: true,
-                tipoApartamento: false,
+                tipo: "Casa",
                 logradouro: "João de Paulas",
                 tipoLogradouro: "Travessa",
                 numero: "51",
@@ -71,8 +77,7 @@
               },
               {
                 id: 2,
-                tipoCasa: false,
-                tipoApartamento: true,
+                tipo: "Apartamento",
                 logradouro: "Lourenço Baptista",
                 tipoLogradouro: "Rua",
                 numero: "137A",
@@ -94,11 +99,12 @@
             telefone: "21 954123687 (celular)",
             email: "holanda.k.marcos@gmail.com",
             senha: "biapaulinho2010-2002",
+            ranking: 3,
+            status: "Ativo",
             enderecos: [
               {
                 id: 1,
-                tipoCasa: false,
-                tipoApartamento: true,
+                tipo: "Apartamento",
                 logradouro: "Savino Mesquita",
                 tipoLogradouro: "Rua",
                 numero: "452",
@@ -120,11 +126,12 @@
             telefone: "31 948752023 (celular)",
             email: "cahzinha.yami@gmail.com",
             senha: "yaCahzinha8765@norumaka",
+            ranking: 6,
+            status: "Ativo",
             enderecos: [
               {
                 id: 1,
-                tipoCasa: false,
-                tipoApartamento: true,
+                tipo: "Apartamento",
                 logradouro: "Pimentel",
                 tipoLogradouro: "Avenida",
                 numero: "89",
@@ -139,6 +146,26 @@
           },
         ],
       };
+    },
+    methods: {
+      editarCliente(item){
+        this.clienteEdit = item;  
+        this.editando = true;
+        this.confrimSenha = item.senha;
+        this.quantidadeEndereco = item.enderecos.length;
+      },
+      alterarEnderecoCobranca(endereco_id){
+        this.clienteEdit.enderecos.forEach(element => {
+          if(element.cobranca){
+            element.cobranca = false;
+          }
+        });
+        this.clienteEdit.enderecos.forEach(element => {
+          if(element.id == endereco_id){
+              element.cobranca = true;
+            }
+        });
+      }
     },
   };
 </script>
@@ -174,18 +201,26 @@
                 <div class="col-4">
                   <b>E-mail:</b> {{item.email}} 
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                   <b>Senha: </b> {{item.senha}} 
+                </div>
+                <div class="col-4">
+                  <div>
+                    <b-button v-b-modal.modal-1><small>Alterar Senha</small></b-button>
+                    <b-modal id="modal-1" title="Alterar Senha">
+                      <label class="form-label">Nova Senha</label>
+                      <input v-model="item.senha" type="password" class="form-control">
+                      <label class="form-label">Confirmar Senha</label>
+                      <input v-model="confrimSenha" type="password" class="form-control">
+                    </b-modal>
+                  </div>
                 </div>
               </div>
               <div v-for="endereco in item.enderecos" :key="endereco.id">
                 <hr>
                 <div class="row  cliente-detalhe">
-                  <div v-if="item.endereco.tipoApartamento" class="col-8">
-                    <b>Endereço {{endereco.id}} - (Apartamento)</b>
-                  </div>
-                   <div v-else class="col-8">
-                    <b>Endereço {{endereco.id}} - (Casa)</b>
+                  <div class="col-8">
+                    <b>Endereço {{endereco.id}} - {{(endereco.tipo)}}</b>
                   </div>
                 </div>
                 <div class="row  cliente-detalhe">
@@ -198,7 +233,7 @@
                 </div>
                 <div v-if="endereco.complemento" class="row  cliente-detalhe">
                   <div class="col-8">
-                    <b>Complemento: </b> {{endereco.complemento}}
+                    <b>Complemento:</b> {{endereco.complemento}}
                   </div>
                 </div>
                 <div class="row  cliente-detalhe">
@@ -206,7 +241,7 @@
                     <b>Cidade: </b> {{endereco.cidade}}
                   </div>
                   <div class="col-4">
-                    <b>UF: </b> {{endereco.estado}}
+                    <b>Estado: </b> {{endereco.estado}}
                   </div>
                 </div>
                 <div class="row  cliente-detalhe">
@@ -223,7 +258,7 @@
               <div class="row  cliente-detalhe" style="margin-bottom: 8px;">
                 <div class="col-8"></div>
                 <div class="col-2">
-                  <button class="btn btn-edit" v-on-click="clienteEdit = item" onclick="window.location = '#editForm'">Editar Cliente</button>
+                  <a href="#editForm" class="btn btn-edit" @click="editarCliente(item)">Editar Cliente</a>
                 </div>
                 <div class="col-2">
                   <button class="btn btn-delete">Inativar Cliente</button>
@@ -246,19 +281,32 @@
             <h4>Editar Cliente</h4>
           </div>
         </div>
+        <br>
         <div class="row">
           <div class="col-2"></div>
           <div class="col-4">
             <label class="form-label">Nome</label>
-            <input type="text" class="form-control">
+            <input v-model="clienteEdit.nome" type="text" class="form-control">
           </div>
           <div class="col-2">
             <label class="form-label">CPF</label>
-            <input type="text" class="form-control">
+            <input v-model="clienteEdit.cpf" type="text" class="form-control">
           </div>
           <div class="col-2">
             <label class="form-label">Data de Nascimento</label>
-            <input type="text" class="form-control">
+            <input v-model="clienteEdit.dataNasc" type="text" class="form-control">
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-5">
+            <label class="form-label">Email</label>
+            <input v-model="clienteEdit.email" type="text" class="form-control">
+          </div>
+          <div class="col-2">
+            <label class="form-label">Telefone</label>
+            <input v-model="clienteEdit.telefone" type="text" class="form-control">
           </div>
         </div>
         <br>
@@ -266,123 +314,124 @@
           <div class="col-2"></div>
           <div class="col-2">
             <label class="form-label">Gênero</label>
-            <input type="text" class="form-control">
-          </div>
-           <div class="col-2">
-            <label class="form-label">Telefone</label>
-            <input type="text" class="form-control">
+            <input v-model="clienteEdit.genero" type="text" class="form-control">
           </div>
         </div>
         <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="col-1">
-            <b>Endereço</b>
-          </div>
-        </div>
         <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="col-1">
-            <label class="form-label">Logradouro</label>
-            <b-dropdown v-model="clienteEdit.endereco.tipoLogradouro" text="selecione">
-              <b-dropdown-item>Rua</b-dropdown-item>
-              <b-dropdown-item>Avenida</b-dropdown-item>
-              <b-dropdown-item>Travessa</b-dropdown-item>
-              <b-dropdown-item>Estrada</b-dropdown-item>
-              <b-dropdown-item>Alameda</b-dropdown-item>
-              <b-dropdown-item>Rodovia</b-dropdown-item>
-              <b-dropdown-item>Viela</b-dropdown-item>
-            </b-dropdown>
+        <div v-for="endereco in clienteEdit.enderecos" :key="endereco.id">
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8"><hr></div>
           </div>
-          <div class="col-6">
-            <label class="form-label">&nbsp;</label>
-            <input :v-model="clienteEdit.endereco.logradouro" type="text" class="form-control">
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-7">
+              <b>Endereço {{endereco.id}}</b>
+            </div>
+            <div v-if="quantidadeEndereco > 1" class="col-1">
+              <button class="btn btn-danger"><small>Remover</small></button>
+            </div>
           </div>
-          <div class="col-1">
-            <label class="form-label">Número</label>
-            <input :v-model="clienteEdit.endereco.numero" type="text" class="form-control">
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-1">
+              <label class="form-label">Tipo</label>
+              <b-dropdown :text="endereco.tipo">
+                <b-dropdown-item @click="endereco.tipo = 'Casa'">Casa</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipo = 'Apartamento'">Apartamento</b-dropdown-item>
+              </b-dropdown>
+            </div>
           </div>
+          <br>
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-1">
+              <label class="form-label">Logradouro</label>
+              <b-dropdown v-model="endereco.tipoLogradouro" :text="endereco.tipoLogradouro">
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Rua'">Rua</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Avenida'">Avenida</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Travessa'">Travessa</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Estrada'">Estrada</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Alameda'">Alameda</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Rodovia'">Rodovia</b-dropdown-item>
+                <b-dropdown-item @click="endereco.tipoLogradouro = 'Viela'">Viela</b-dropdown-item>
+              </b-dropdown>
+            </div>
+            <div class="col-6">
+              <label class="form-label">&nbsp;</label>
+              <input v-model="endereco.logradouro" type="text" class="form-control">
+            </div>
+            <div class="col-1">
+              <label class="form-label">Número</label>
+              <input v-model="endereco.numero" type="text" class="form-control">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-4">
+              <label class="form-label">Complemento</label>
+              <input v-model="endereco.complemento" type="text" class="form-control">
+            </div>
+            <div class="col-3">
+              <label class="form-label">Cidade</label>
+              <input v-model="endereco.cidade" type="text" class="form-control">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-1">
+              <label class="form-label">Estado</label>
+              <b-dropdown :text="endereco.estado">
+                <b-dropdown-item @click="endereco.estado = 'AC'">AC</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'AL'">AL</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'AP'">AP</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'AM'">AM</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'BA'">BA</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'CE'">CE</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'DF'">DF</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'ES'">ES</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'GO'">GO</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'MA'">MA</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'MT'">MT</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'MS'">MS</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'MG'">MG</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'PA'">PA</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'PB'">PB</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'PR'">PR</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'PE'">PE</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'PI'">PI</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'RJ'">RJ</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'RN'">RN</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'RS'">RS</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'RO'">RO</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'RR'">RR</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'SC'">SC</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'SP'">SP</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'SE'">SE</b-dropdown-item>
+                <b-dropdown-item @click="endereco.estado = 'TO'">TO</b-dropdown-item>
+              </b-dropdown>
+            </div>
+            <div class="col-2">
+              <label class="form-label">CEP</label>
+              <input v-model="endereco.cep" type="text" class="form-control">
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="form-check" @click="alterarEnderecoCobranca(endereco.id)" style="margin-left: 10px;">
+              <input v-model="endereco.cobranca" class="form-check-input" type="checkbox" :id="endereco.id">
+              <label class="form-check-label">
+                Endereço de Cobrança
+              </label>
+            </div>
+          </div>
+          <br>
         </div>
-        <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="col-4">
-            <label class="form-label">Complemento</label>
-            <input :v-model="clienteEdit.endereco.complemento" type="text" class="form-control">
-          </div>
-          <div class="col-3">
-            <label class="form-label">Cidade</label>
-            <input :v-model="clienteEdit.endereco.cidade" type="text" class="form-control">
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="col-1">
-            <label class="form-label">UF</label>
-            <b-dropdown :v-model="clienteEdit.endereco.uf" text="selecione">
-              <b-dropdown-item>AC</b-dropdown-item>
-              <b-dropdown-item>AL</b-dropdown-item>
-              <b-dropdown-item>AP</b-dropdown-item>
-              <b-dropdown-item>AM</b-dropdown-item>
-              <b-dropdown-item>BA</b-dropdown-item>
-              <b-dropdown-item>CE</b-dropdown-item>
-              <b-dropdown-item>DF</b-dropdown-item>
-              <b-dropdown-item>ES</b-dropdown-item>
-              <b-dropdown-item>GO</b-dropdown-item>
-              <b-dropdown-item>MA</b-dropdown-item>
-              <b-dropdown-item>MT</b-dropdown-item>
-              <b-dropdown-item>MS</b-dropdown-item>
-              <b-dropdown-item>MG</b-dropdown-item>
-              <b-dropdown-item>PA</b-dropdown-item>
-              <b-dropdown-item>PB</b-dropdown-item>
-              <b-dropdown-item>PR</b-dropdown-item>
-              <b-dropdown-item>PE</b-dropdown-item>
-              <b-dropdown-item>PI</b-dropdown-item>
-              <b-dropdown-item>RJ</b-dropdown-item>
-              <b-dropdown-item>RN</b-dropdown-item>
-              <b-dropdown-item>RS</b-dropdown-item>
-              <b-dropdown-item>RO</b-dropdown-item>
-              <b-dropdown-item>RR</b-dropdown-item>
-              <b-dropdown-item>SC</b-dropdown-item>
-              <b-dropdown-item>SP</b-dropdown-item>
-              <b-dropdown-item>SE</b-dropdown-item>
-              <b-dropdown-item>TO</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="col-2">
-            <label class="form-label">CEP</label>
-            <input :v-model="clienteEdit.endereco.cep" type="text" class="form-control">
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="form-check" style="margin-left: 10px;">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-            <label class="form-check-label" for="flexRadioDefault1">
-              Casa
-            </label>
-          </div>
-          <div class="form-check" style="margin-left: 10px;">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-            <label class="form-check-label" for="flexRadioDefault2">
-              Apartamento
-            </label>
-          </div>
-        </div>
-        <br>
-        <div class="row">
-          <div class="col-2"></div>
-          <div class="form-check" style="margin-left: 10px;">
-            <input v-model="clienteEdit.enderecos" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-              Endereço de Cobrança
-            </label>
-          </div>
-        </div>
-        <br>
         <div class="row">
           <div class="col-2"></div>
           <div class="col-7"></div>
