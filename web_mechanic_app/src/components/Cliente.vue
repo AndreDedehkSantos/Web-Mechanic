@@ -402,7 +402,7 @@
         this.filtrosSelecionados.splice(index, 1);
       },
       inativarCliente(){
-        window.alert("Cliente Inativado!");
+        window.alert("Cliente inativado!");
       }
     },
   };
