@@ -9,18 +9,13 @@
     <nav class="navbar navbar-expand-lg navbar-dark headerBar">
       <div class="container-fluid">
         <a class="navbar-brand" herf="#">
-          <img
-            src="../assets/logo.png"
-            width="80px"
-            height="auto"
-            class="logo"
-          />
+          <img src="../assets/logo.png" width="80px" height="auto" class="logo"/>
         </a>
         <b-button v-b-toggle.collapse-1 class="navbar-toggler">
           <span class="navbar-toggler-icon"></span>
         </b-button>
         <b-collapse class="collapse navbar-collapse" id="collapse-1">
-          <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="#">Produtos</a>
             </li>
@@ -34,9 +29,9 @@
               <a class="nav-link" href="#">Estoque</a>
             </li>
           </ul>
-          <ul class="nav navbar-nav navbar-right" style="margin-right: 10px">
+          <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#">Usuários</a>
+              <a class="nav-link nav-link" href="#">usuario@webmechanic</a>
             </li>
           </ul>
         </b-collapse>
@@ -48,6 +43,7 @@
 
 <style scoped>
   .headerBar {
+    border: 1px solid rgba(10, 10, 10, 0.829);
     background-color: rgba(10, 10, 10, 0.699);
   }
   .headerItems {

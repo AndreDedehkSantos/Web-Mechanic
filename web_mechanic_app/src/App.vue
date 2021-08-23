@@ -1,12 +1,14 @@
 <script>
-  import Headerbar from "./components/HeaderBar.vue";
-  import Cliente from "./components/Cliente.vue";
+  import Headerbar from "./components/HeaderBar";
+  import Cliente from "./components/NewCliente";
+  import FooterBar from "./components/FooterBar";
 
 export default {
   name: "App",
   components: {
     Headerbar,
     Cliente,
+    FooterBar
   },
 };
 </script>
@@ -15,15 +17,7 @@ export default {
   <div id="app">
     <Headerbar />
     <Cliente />
-    <!--<footer class="border-top fixed-bottom text-muted headerBar">
-      <div class="container">
-        <div class="row py-2">
-          <div class="col-12 text-center">
-            &copy; 2021 - Web Mechanic.
-          </div>
-        </div>
-      </div>
-    </footer>-->
+    <FooterBar />
   </div>
 </template>
 

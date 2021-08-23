@@ -1,9 +1,5 @@
 <script>
-  import FooterBar from "../components/FooterBar.vue"
   export default {
-    components: {
-      FooterBar
-    },
     data() {
       return {
         search: '',
@@ -53,6 +49,7 @@
                 estado: "SP",
                 cep: "03213876",
                 cobranca: true,
+                entrega: true
               }
             ],
             cartoes: [
@@ -114,6 +111,7 @@
                 estado: "GO",
                 cep: "09651470",
                 cobranca: true,
+                entrega: true
               },
               {
                 id: 2,
@@ -128,6 +126,7 @@
                 estado: "MG",
                 cep: "14012548",
                 cobranca: false,
+                entrega: false
               }
             ],
             cartoes: [
@@ -189,6 +188,7 @@
                 estado: "RJ",
                 cep: "25631478",
                 cobranca: true,
+                entrega: true
               }
             ],
             cartoes: [
@@ -260,6 +260,7 @@
                 estado: "SC",
                 cep: "47123541",
                 cobranca: true,
+                entrega: true
               }
             ],
             cartoes: [
@@ -320,7 +321,8 @@
               cidade: null,
               estado: "Selecione",
               cep: null,
-              cobranca: false,
+              cobranca: true,
+              entrega: true
             }
           ],
           cartoes: [
@@ -371,6 +373,18 @@
         this.clienteEdit.cartoes.forEach(element => {
           if(element.id == cartao_id){
               element.preferencial = true;
+            }
+        });
+      },
+      alterarEnderecoEntrega(endereco_id){
+        this.clienteEdit.enderecos.forEach(element => {
+          if(element.entrega){
+            element.entrega = false;
+          }
+        });
+        this.clienteEdit.enderecos.forEach(element => {
+          if(element.id == endereco_id){
+              element.entrega = true;
             }
         });
       },
@@ -536,9 +550,16 @@
                       <b><u>ENDEREÇO DE COBRANÇA</u></b>
                     </div>
                   </div>
+                  <div v-if="endereco.entrega" class="row cliente-detalhe">
+                    <div class="col-4">
+                      <b><u>ENDEREÇO DE ENTREGA</u></b>
+                    </div>
+                  </div>
+                  <br>
                   <br>
                 </div>
                 <hr>
+                <br>
                 <div class="row cliente-detalhe">
                   <div class="col-4">
                     <b>Cartões</b>
@@ -626,7 +647,7 @@
     </div>
     <div v-if="inserindo" class="container-fluid edit-container" id="newForm" style="margin-top: 30px;">
       <form>
-         <div class="row">
+        <div class="row">
           <div class="col-2"></div>
           <div class="col-8"><hr></div>
         </div>
@@ -1002,6 +1023,16 @@
             </div>
           </div>
           <br>
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="form-check" @click="alterarEnderecoEntrega(endereco.id)" style="margin-left: 10px;">
+              <input v-model="endereco.entrega" class="form-check-input" type="checkbox" :id="endereco.id" :disabled="clienteEdit.enderecos.length < 2">
+              <label class="form-check-label">
+                Endereço de Entrega
+              </label>
+            </div>
+          </div>
+          <br>
           <br>
         </div>
         <div class="row">
@@ -1225,7 +1256,6 @@
       </div>
     </div>
     <div v-else></div>
-    <FooterBar/>
   </div>
 </template>
 
