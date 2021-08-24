@@ -20,7 +20,7 @@
             id: 1,
             nome: "José Carlos de Sampaio",
             genero: "Masculino",
-            dataNasc: "1976-04-30",
+            dataNasc: "30/04/1976",
             cpf: "23145312398",
             email: "jcarlossampaio@yahoo.com.br",
             senha: "********",
@@ -82,14 +82,14 @@
             id: 2,
             nome: "Marcos de Holanda Kristenssen",
             genero: "Masculino",
-            dataNasc: "1992-08-17",
+            dataNasc: "17/08/1992",
             cpf: "53089741236",
             email: "holanda.k.marcos@gmail.com",
             senha: "*************",
             ranking: 3,
             status: "Ativo",
             telefone: {
-              tipo: "celular",
+              tipo: "Celular",
               ddd: "21",
               numero: "954123687"
             },
@@ -154,14 +154,14 @@
             id: 3,
             nome: "Helena de Castro Paulino",
             genero: "Feminino",
-            dataNasc: "1983-12-01",
+            dataNasc: "01/12/1983",
             cpf: "31050046987",
             email: "helena.castro83@outlook.com",
             senha: "********",
             ranking: 8,
             status: "Ativo",
             telefone: {
-              tipo: "celular",
+              tipo: "Celular",
               ddd: "58",
               numero: "954120369"
             },
@@ -231,14 +231,14 @@
             id: 4,
             nome: "Camila Yami Norumaka",
             genero: "Feminino",
-            dataNasc: "1994-06-19",
+            dataNasc: "19/06/1994",
             cpf: "47102306987",
             email: "cahzinha.yami@gmail.com",
             senha: "*****************",
             ranking: 6,
             status: "Ativo",
             telefone: {
-              tipo: "celular",
+              tipo: "Celular",
               ddd: "31",
               numero: "948752023"
             },
@@ -289,6 +289,56 @@
               }
             ]
           },
+          {
+            id: 5,
+            nome: "Paula Gabriela de Castro",
+            genero: "Feminino",
+            dataNasc: "15/02/1997",
+            cpf: "478932156420",
+            email: "paula.gaby@gmail.com",
+            senha: "*************",
+            ranking: 0,
+            status: "Ativo",
+            telefone: {
+              tipo: "Celular",
+              ddd: "11",
+              numero: "956234178"
+            },
+            enderecos: [
+              {
+                id: 1,
+                tipo: "Apartamento",
+                descricao: "Residencial",
+                logradouro: "Manuel de Almeida",
+                tipoLogradouro: "Rua",
+                numero: "48",
+                complemento: "Bloco 4 - Apto 36",
+                bairro: "Centro",
+                cidade: "Fortaleza",
+                estado: "CE",
+                cep: "48751236",
+                cobranca: true,
+                entrega: true
+              },
+              {
+                id: 2,
+                tipo: "Casa",
+                descricao: "Loja",
+                logradouro: "Olavo Batista",
+                tipoLogradouro: "Rua",
+                numero: "32",
+                complemento: null,
+                bairro: "Centro",
+                cidade: "Fortaleza",
+                estado: "CE",
+                cep: "48023961",
+                cobranca: false,
+                entrega: false
+              }
+            ],
+            cartoes: [],
+            transacoes: []
+          },
         ],
         novoEndereco: {
           id: 1,
@@ -313,6 +363,26 @@
           nomeImpresso: null
         },
         novoCliente: {
+          id: null,
+          nome: null,
+          cpf: null,
+          dataNasc: null,
+          genero: "Selecione",
+          email: null,
+          senha: null,
+          telefone:{
+            tipo: "Selecione",
+            ddd: null,
+            numero: null
+          },
+          ranking: 0,
+          status: "Ativo",
+          enderecos: [],
+          cartoes: [],
+          transacoes: []
+        },
+         editCliente: {
+          id: null,
           nome: null,
           cpf: null,
           dataNasc: null,
@@ -410,17 +480,21 @@
         return retornoErro;
       },
       cadastrarCliente(){
-        this.novoEndereco.cobranca = true;
-        this.novoEndereco.entrega = true;
-        this.novoCliente.enderecos.push(this.novoEndereco);
-        this.novoCliente.id = this.clientes.length + 1;
-        this.clientes.push(this.novoCliente);
-        this.fecharModal = true;
-        window.alert("Cliente Cadastrado com Sucesso!");
-        this.detalhesCliente(this.novoCliente);
-        this.cancelarCadastroCliente();
-        this.cancelarCadastroEndereco();
-       
+        let retornoErro = [];
+        retornoErro = this.validarCliente(this.novoCliente);
+        if(retornoErro.length == 0){
+          this.novoEndereco.cobranca = true;
+          this.novoEndereco.entrega = true;
+          this.novoCliente.enderecos.push(this.novoEndereco);
+          this.novoCliente.id = this.clientes.length + 1;
+          console.log(this.novoCliente);
+          this.clientes.push(this.novoCliente);
+          console.log()
+          window.alert("Cliente Cadastrado com Sucesso!");
+          this.detalhesCliente(this.novoCliente);
+        }else{
+          window.alert(retornoErro);
+        }
       },
       cadastrarEndereco(cliente_id, endereco){
         this.clientes.forEach(element => {
@@ -450,6 +524,16 @@
         this.novoEndereco.bairro = null;
         this.novoEndereco.cidade = null;
         this.novoEndereco.estado = "Selecione";
+      },
+      editarCliente(cliente){
+        this.editCliente = cliente;
+      },
+      concluirEdicao(cliente_id){
+        this.clientes.forEach(element => {
+          if(element.id == cliente_id){
+            element = this.editCliente;
+          }
+        });
       },
       cancelarCadastroCliente(){
         this.novoCliente.nome = null;
@@ -491,6 +575,9 @@
         });
         window.alert("Cartão removido com sucesso!");
       },
+      inativarCliente(){
+        window.alert("Cliente Inativado!");
+      }
     },
   };
 </script>
@@ -536,9 +623,7 @@
                   <div class="row pb-3">
                     <div class="col-md-7">
                       <label class="form-label">Data de Nascimento</label>
-                      <div>
-                        <b-form-datepicker id="example-datepicker" v-model="novoCliente.dataNasc" class="mb-2"></b-form-datepicker>
-                      </div>
+                      <input v-model="novoCliente.dataNasc" type="text" placeholder="dd/mm/aaaa" class="form-control form-control-sm">
                     </div>
                     <div class="col-md-2">
                       <label class="form-label">Telefone</label>
@@ -700,18 +785,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr @click="detalhesCliente(cliente)" v-for="cliente in clientes" :key="cliente.id">
-              <th><small>{{cliente.id}}</small></th>
-              <td><small>{{cliente.nome}}</small></td>
-              <td><small>{{cliente.cpf}}</small></td>
-              <td><small>{{cliente.dataNasc}}</small></td>
-              <td><small>{{cliente.genero}}</small></td>
-              <td><small>{{cliente.email}}</small></td>
-              <td><small>{{cliente.telefone.ddd}} {{cliente.telefone.numero}} ({{cliente.telefone.tipo}})</small></td>
-              <td><small>{{cliente.ranking}}</small></td>
-              <td><small>{{cliente.status}}</small></td>
+            <tr v-for="cliente in clientes" :key="cliente.id">
+              <th @click="detalhesCliente(cliente)"><small>{{cliente.id}}</small></th>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.nome}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.cpf}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.dataNasc}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.genero}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.email}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.telefone.ddd}} {{cliente.telefone.numero}} ({{cliente.telefone.tipo}})</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.ranking}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.status}}</small></td>
               <td>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal">Editar</button>&nbsp;
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal" @click="editarCliente(cliente)">Editar</button>&nbsp;
                 <div class="modal fade" id="editClienteModal" tabindex="-1" aria-labelledby="editClienteModalLabel" aria-hidden="true">
                   <div class="modal-dialog  modal-lg">
                     <div class="modal-content">
@@ -724,20 +809,20 @@
                           <div class="row pb-3">
                             <div class="col-md-7">
                               <label class="form-label">Nome</label>
-                              <input v-model="cliente.nome" type="text" class="form-control form-control-sm">
+                              <input v-model="editCliente.nome" type="text" class="form-control form-control-sm">
                             </div>
                             <div class="col-md-3">
                               <label class="form-label">CPF</label>
-                              <input v-model="cliente.cpf" type="text" class="form-control form-control-sm">
+                              <input v-model="editCliente.cpf" type="text" class="form-control form-control-sm">
                             </div>
                             <div class="col-md-2">
                               <label class="form-label">Gênero</label>
                               <div class="dropdown">
-                                <button style="width: 92.81px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton6" data-bs-toggle="dropdown" aria-expanded="false">{{cliente.genero}}</button>
+                                <button style="width: 92.81px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton6" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.genero}}</button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton6">
-                                  <li><a class="dropdown-item" href="#" @click="cliente.genero = 'Masculino'">Masculino</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="cliente.genero = 'Feminino'">Feminino</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="cliente.genero = 'Outro'">Outro</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Masculino'">Masculino</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Feminino'">Feminino</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Outro'">Outro</a></li>
                                 </ul>
                               </div>
                             </div>
@@ -745,46 +830,44 @@
                           <div class="row pb-3">
                             <div class="col-md-7">
                               <label class="form-label">Data de Nascimento</label>
-                              <div>
-                                <b-form-datepicker id="example-datepicker" v-model="cliente.dataNasc" class="mb-2"></b-form-datepicker>
-                              </div>
+                              <input v-model="editCliente.dataNasc" type="text" class="form-control form-control-sm">
                             </div>
                             <div class="col-md-2">
                               <label class="form-label">Telefone</label>
                               <div class="dropdown">
-                                <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-expanded="false">{{cliente.telefone.tipo}}</button>
+                                <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.telefone.tipo}}</button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
-                                  <li><a class="dropdown-item" href="#" @click="cliente.telefone.tipo = 'Residencial'">Residencial</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="cliente.telefone.tipo  = 'Celular'">Celular</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="cliente.telefone.tipo  = 'Comercial'">Comercial</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo = 'Residencial'">Residencial</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Celular'">Celular</a></li>
+                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Comercial'">Comercial</a></li>
                                 </ul>
                               </div>
                             </div>
                             <div class="col-md-1">
                               <label class="form-label">DDD</label>
-                              <input v-model="cliente.telefone.ddd" type="text" class="form-control form-control-sm">
+                              <input v-model="editCliente.telefone.ddd" type="text" class="form-control form-control-sm">
                             </div>
                             <div class="col-md-2">
                               <label class="form-label">Número</label>
-                              <input v-model="cliente.telefone.numero" type="text" class="form-control form-control-sm">
+                              <input v-model="editCliente.telefone.numero" type="text" class="form-control form-control-sm">
                             </div>
                           </div>
                           <div class="row pb-3">
                             <div class="col-md-4">
                               <label class="form-label">E-mail</label>
-                              <input v-model="cliente.email" type="text" class="form-control form-control-sm">
+                              <input v-model="editCliente.email" type="text" class="form-control form-control-sm">
                             </div>
                           </div>
                         </form>
                       </div>
                       <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-new" data-bs-dismiss="modal" @click="validarDados()">Concluir</button>
+                        <button class="btn btn-new" data-bs-dismiss="modal" @click="concluirEdicao(cliente.id)">Concluir</button>
                       </div>
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-secondary btn-sm"  data-bs-toggle="modal" data-bs-target="#editSenhaModal">Alterar Senha</button>
+                <button class="btn btn-secondary btn-sm"  data-bs-toggle="modal" data-bs-target="#editSenhaModal" @click="confirmarSenha = null">Alterar Senha</button>
                 <div class="modal fade" id="editSenhaModal" tabindex="-1" aria-labelledby="newCartaoModalLabel" aria-hidden="true">
                   <div class="modal-dialog  modal-sm">
                     <div class="modal-content">

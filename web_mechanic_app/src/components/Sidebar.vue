@@ -15,6 +15,12 @@
         <h5>Filtros</h5>
       </div>
        <form>
+         <div class="row px-3">
+          <div class="col-12 filter-box">
+            <label class="form-label">Código</label>
+            <input type="text" class="form-control form-control-sm">
+          </div>
+        </div>
         <div class="row px-3">
           <div class="col-12 filter-box">
             <label class="form-label">Nome</label>
