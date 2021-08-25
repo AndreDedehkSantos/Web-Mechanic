@@ -27,7 +27,6 @@ namespace web_mechanic_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:conexaoMySQL"]));
 
         }
 
