@@ -15,6 +15,7 @@ namespace web_mechanic_api.Models
         public Telefone telefone { get; set; }
         public List<Endereco> enderecos { get; set; }
         public List<Cartao> cartoes { get; set; }
+        public int ranking { get; set; }
         public bool status { get;set; }
     }
 }

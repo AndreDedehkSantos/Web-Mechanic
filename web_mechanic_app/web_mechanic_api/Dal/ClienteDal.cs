@@ -30,6 +30,7 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@cpf", cliente.cpf);
         cmd.Parameters.AddWithValue("@email", cliente.email);
         cmd.Parameters.AddWithValue("@senha", cliente.senha);
+        cmd.Parameters.AddWithValue("@ranking", cliente.ranking);
         if(cliente.status)
         {
           cmd.Parameters.AddWithValue("@status_cliente", 1);
@@ -72,6 +73,7 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@numeroTelefone", cliente.telefone.numero);
         cmd.Parameters.AddWithValue("@email", cliente.email);
         cmd.Parameters.AddWithValue("@senha", cliente.senha);
+        cmd.Parameters.AddWithValue("@ranking", cliente.ranking);
         cmd.Parameters.AddWithValue("@status_cliente", 1);
         cliente.id = Convert.ToInt32(cmd.ExecuteScalar());
         EnderecoDal enderecoDal = new EnderecoDal();
