@@ -16,6 +16,8 @@ namespace web_mechanic_api.Models
     public string cep { get; set; }
     public Cidade cidade { get; set; }
     public Estado estado { get; set; }
+    public bool combranca { get; set; }
+    public bool entrega { get; set; }
 
   }
 }

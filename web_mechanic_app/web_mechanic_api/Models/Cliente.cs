@@ -12,8 +12,9 @@ namespace web_mechanic_api.Models
         public DateTime dataNascimento { get; set; }
         public string email { get; set; }
         public string senha { get; set; }
-        public List<Telefone> telefones { get; set; }
+        public Telefone telefone { get; set; }
         public List<Endereco> enderecos { get; set; }
         public List<Cartao> cartoes { get; set; }
+        public bool status { get;set; }
     }
 }

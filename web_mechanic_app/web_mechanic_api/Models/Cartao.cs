@@ -11,5 +11,6 @@ namespace web_mechanic_api.Models
         public string codigoVerificacao { get; set; }
         public DateTime dataValidade { get; set; }
         public string nomeImpresso { get; set; }
+        public bool preferencial { get; set; }
     }
 }
