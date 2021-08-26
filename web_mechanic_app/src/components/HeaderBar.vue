@@ -8,9 +8,9 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-dark headerBar">
       <div class="container-fluid">
-        <a class="navbar-brand" herf="#">
+        <router-link class="navbar-brand" to="/Index">
           <img src="../assets/logo.png" width="80px" height="auto" class="logo"/>
-        </a>
+        </router-link>
         <b-button v-b-toggle.collapse-1 class="navbar-toggler">
           <span class="navbar-toggler-icon"></span>
         </b-button>
@@ -20,7 +20,7 @@
               <a class="nav-link" href="#">Produtos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Clientes</a>
+              <router-link class="nav-link" to="/Clientes">Clientes</router-link>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Vendas</a>

@@ -18,3 +18,5 @@ D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\
 D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_app\web_mechanic_api\obj\Debug\netcoreapp3.1\web_mechanic_api.dll
 D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_app\web_mechanic_api\obj\Debug\netcoreapp3.1\web_mechanic_api.pdb
 D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_app\web_mechanic_api\obj\Debug\netcoreapp3.1\web_mechanic_api.genruntimeconfig.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_app\web_mechanic_api\bin\Debug\netcoreapp3.1\MySqlConnector.dll
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_app\web_mechanic_api\obj\Debug\netcoreapp3.1\web_mechanic_api.csproj.CopyComplete

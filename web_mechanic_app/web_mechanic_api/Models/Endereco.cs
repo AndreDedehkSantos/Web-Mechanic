@@ -1,5 +1,3 @@
-using web_mechanic_api.Models.Enum;
-
 namespace web_mechanic_api.Models
 {
   public class Endereco : EntidadeDominio

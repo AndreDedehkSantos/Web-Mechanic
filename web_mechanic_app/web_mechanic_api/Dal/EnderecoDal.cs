@@ -182,13 +182,13 @@ namespace web_mechanic_api.Dal
           Endereco endereco = new Endereco();
           endereco.id = Convert.ToInt32(resultado["id"]);
           endereco.tipo = resultado["tipo"].ToString();
-          endereco.tipo = resultado["descricao"].ToString();
-          endereco.tipo = resultado["tipoLogradouro"].ToString();
-          endereco.tipo = resultado["logradouro"].ToString();
-          endereco.tipo = resultado["numero"].ToString();
-          endereco.tipo = resultado["complemento"].ToString();
-          endereco.tipo = resultado["bairro"].ToString();
-          endereco.tipo = resultado["cep"].ToString();
+          endereco.descricao = resultado["descricao"].ToString();
+          endereco.tipoLogradouro = resultado["tipoLogradouro"].ToString();
+          endereco.logradouro = resultado["logradouro"].ToString();
+          endereco.numero = resultado["numero"].ToString();
+          endereco.complemento = resultado["complemento"].ToString();
+          endereco.bairro = resultado["bairro"].ToString();
+          endereco.cep = resultado["cep"].ToString();
           if(Convert.ToInt32(resultado["cobranca"]) == 1)
           {
              endereco.combranca = true;

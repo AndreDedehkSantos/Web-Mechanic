@@ -1,13 +1,11 @@
 <script>
   import Headerbar from "./components/HeaderBar";
-  import Cliente from "./components/NewCliente";
   import FooterBar from "./components/FooterBar";
 
 export default {
   name: "App",
   components: {
     Headerbar,
-    Cliente,
     FooterBar
   },
 };
@@ -16,7 +14,7 @@ export default {
 <template>
   <div id="app">
     <Headerbar />
-    <Cliente />
+   <router-view></router-view>
     <FooterBar />
   </div>
 </template>

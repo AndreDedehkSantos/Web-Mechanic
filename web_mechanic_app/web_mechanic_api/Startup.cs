@@ -27,7 +27,8 @@ namespace web_mechanic_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
+            services.AddCors();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +38,7 @@ namespace web_mechanic_api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
@@ -48,6 +50,7 @@ namespace web_mechanic_api
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

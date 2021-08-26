@@ -109,32 +109,44 @@ namespace web_mechanic_api.Dal
         while(resultado.Read())
         {
           Cliente cliente = new Cliente();
+          Telefone telefone = new Telefone();
           cliente.id = Convert.ToInt32(resultado["id"]);
           cliente.nome = resultado["nome"].ToString();
           cliente.dataNascimento = Convert.ToDateTime(resultado["dataNascimento"]);
           cliente.genero = resultado["genero"].ToString();
           cliente.cpf = resultado["cpf"].ToString();
+          telefone.tipo = resultado["tipoTelefone"].ToString();
+          telefone.ddd = resultado["dddTelefone"].ToString();
+          telefone.numero = resultado["numeroTelefone"].ToString();
           cliente.email = resultado["email"].ToString();
           cliente.senha = resultado["senha"].ToString();
-          EnderecoDal endDal = new EnderecoDal();
-          List<EntidadeDominio> enderecosEntidade = endDal.Pesquisar(cliente, null);
+          cliente.ranking = Convert.ToInt32(resultado["ranking"]);
+          if(Convert.ToInt32(resultado["status_cliente"]) == 1)
+          {
+            cliente.status = true;
+          }
+          else
+          {
+            cliente.status = false;
+          }
+          cliente.telefone = telefone;
+          EnderecoDal enderecoDal = new EnderecoDal();
+          List<EntidadeDominio> enderecoEntidade = enderecoDal.Pesquisar(cliente, null);
           List<Endereco> enderecos = new List<Endereco>();
-          foreach(EntidadeDominio endereco in enderecosEntidade)
+          foreach(EntidadeDominio endereco in enderecoEntidade)
           {
             enderecos.Add((Endereco)endereco);
           }
-          cliente.enderecos = enderecos;
           CartaoDal cartaoDal = new CartaoDal();
-          List<EntidadeDominio> cartoesEntidade = cartaoDal.Pesquisar(cliente, null);
+          List<EntidadeDominio> cartaoEntidade = cartaoDal.Pesquisar(cliente, null);
           List<Cartao> cartoes = new List<Cartao>();
-          if(cartoesEntidade.Count > 0)
+          foreach(EntidadeDominio cartao in cartaoEntidade)
           {
-            foreach(EntidadeDominio cartao in cartoesEntidade)
-            {
-              cartoes.Add((Cartao)cartao);
-            }
+            cartoes.Add((Cartao)cartao);
           }
+          cliente.enderecos = enderecos;
           cliente.cartoes = cartoes;
+          
           clientes.Add(cliente);
         }
         return clientes;
