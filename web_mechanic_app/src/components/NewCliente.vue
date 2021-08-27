@@ -25,8 +25,12 @@
           numero: null,
           complemento: null,
           bairro: null,
-          cidade: null,
-          estado: "Selecione",
+          cidade: {
+            descricao: null
+          },
+          estado: {
+            uf: "Selecione"
+          },
           cobranca: true,
           entrega: true
         },
@@ -42,7 +46,7 @@
           id: null,
           nome: null,
           cpf: null,
-          dataNasc: null,
+          dataNascimento: null,
           genero: "Selecione",
           email: null,
           senha: null,
@@ -52,7 +56,7 @@
             numero: null
           },
           ranking: 0,
-          status: "Ativo",
+          status: true,
           enderecos: [],
           cartoes: [],
           transacoes: []
@@ -61,7 +65,7 @@
           id: null,
           nome: null,
           cpf: null,
-          dataNasc: null,
+          dataNascimento: null,
           genero: "Selecione",
           email: null,
           senha: null,
@@ -78,102 +82,36 @@
         }
       }
     },
-    created() {
-      this.$http.get('https://localhost:5001/api/Cliente').then(res => this.clientes = res.json()).then(clientes => this.clientes = clientes);
+    mounted() {
+      this.$http.get('https://localhost:5001/api/Cliente').then(res => res.json()).then(clientes => this.clientes = clientes);
     },
     methods: {
       detalhesCliente(cliente){
         window.location.href = "#detalheDiv"
         this.$refs.detalheClienteView.detalhesCliente(cliente);
       },
-      validarEndereco(endereco){
-        let retornoErro = [];
-        if(endereco.tipo == "Selecione"){
-          retornoErro.push("Campo Tipo - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.descricao == null){
-          retornoErro.push("Campo Descrição - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.tipoLogradouro == "Selecione"){
-          retornoErro.push("Campo Tipo do Logradouro - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.logradouro == null){
-          retornoErro.push("Campo Logradouro - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.numero == null){
-          retornoErro.push("Campo Número - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.bairro == null){
-          retornoErro.push("Campo Bairro - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.cidade == "Selecione"){
-          retornoErro.push("Campo Cidade - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.estado == "Selecione"){
-          retornoErro.push("Campo Estado - Endereço é obrigatório" + "\n");
-        }
-        if(endereco.cep == null){
-          retornoErro.push("Campo CEP - Endereço é obrigatório" + "\n");
-        }
-        return retornoErro;
-      },
-      validarCliente(cliente){
-        let retornoErro = [];
-        if(cliente.nome == null){
-          retornoErro.push("Campo Nome é obrigatório!" + "\n");
-        }
-        if(cliente.cpf == null){
-          retornoErro.push("Campo CPF é obrigatório!" + "\n");
-        }
-        if(cliente.dataNasc == null){
-         retornoErro.push("Campo Data de Nascimento é obrigatório!" + "\n");
-        }
-        if(cliente.genero == "Selecione"){
-         retornoErro.push("Campo Gênero é obrigatório!" + "\n");
-        }
-        if(cliente.email == null){
-          retornoErro.push("Campo E-mail é obrigatório!" + "\n");
-        }
-        if(cliente.senha == null){
-          retornoErro.push("Campo Senha é obrigatório!" + "\n");
-        }
-        if(cliente.senha != this.confirmarSenha){
-          retornoErro.push("Senhas Diferentes!" + "\n");
-        }
-        if(cliente.telefone.tipo == "Selecione"){
-          retornoErro.push("Campo Tipo - Telefone é obrigatório!" + "\n");
-        }
-        if(cliente.telefone.ddd == null){
-          retornoErro.push("Campo DDD - Telefone é obrigatório!" + "\n");
-        }
-        if(cliente.telefone.numero == null){
-          retornoErro.push("Campo Número - Telefone é obrigatório!" + "\n");
-        }
-        let erroEndereco = [];
-        erroEndereco = this.validarEndereco(this.novoEndereco);
-        if(erroEndereco != null){
-          erroEndereco.forEach(element => {
-            retornoErro.push(element);
-          })
-        }
-        return retornoErro;
-      },
       cadastrarCliente(){
-        let retornoErro = [];
-        retornoErro = this.validarCliente(this.novoCliente);
-        if(retornoErro.length == 0){
-          this.novoEndereco.cobranca = true;
-          this.novoEndereco.entrega = true;
-          this.novoCliente.enderecos.push(this.novoEndereco);
-          this.novoCliente.id = this.clientes.length + 1;
-          console.log(this.novoCliente);
-          this.clientes.push(this.novoCliente);
-          console.log()
-          window.alert("Cliente Cadastrado com Sucesso!");
-          this.detalhesCliente(this.novoCliente);
-        }else{
-          window.alert(retornoErro);
-        }
+        this.novoCliente.enderecos.push(this.novoEndereco);
+        this.novoCliente.id = 5;
+        this.novoCliente.id = 5;
+        console.log(this.novoCliente.dataNascimento); 
+        var date = new Date(this.novoCliente.dataNascimento);
+        var dateStr =
+          date.getFullYear() + "-" +
+          ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
+          ("00" + date.getDate()).slice(-2) + " " +
+          ("00" + date.getHours()).slice(-2) + ":" +
+          ("00" + date.getMinutes()).slice(-2) + ":" +
+          ("00" + date.getSeconds()).slice(-2);
+        this.novoCliente.dataNascimento = dateStr;
+        this.$http.post('https://localhost:5001/api/Cliente', this.novoCliente).then().then(function(res) {
+          let resultado = res.json();
+          alert("sucess");
+          return resultado;
+          }).catch( function(err){
+              alert("fail")
+              return console.log(err);
+          });
       },
       cadastrarEndereco(cliente_id, endereco){
         this.clientes.forEach(element => {
@@ -233,6 +171,17 @@
           }
         });
         window.alert("Senha alterada com sucesso!");
+      },
+      formatarDataNascimento(data){
+        let dataFormat = new Date(data);
+        let dataRetorno;
+        let dia  = dataFormat.getDate().toString().padStart(2, '0');
+        dataRetorno = dia + "/";
+        let mes = (dataFormat.getMonth()+1).toString().padStart(2, '0');
+        dataRetorno += mes + "/";
+        let ano  = dataFormat.getFullYear();
+        dataRetorno += ano;
+        return dataRetorno;
       },
       removerEndereco(cliente_id, endereco){
         this.clientes.forEach(element => {
@@ -302,7 +251,7 @@
                   <div class="row pb-3">
                     <div class="col-md-7">
                       <label class="form-label">Data de Nascimento</label>
-                      <input v-model="novoCliente.dataNasc" type="text" placeholder="dd/mm/aaaa" class="form-control form-control-sm">
+                      <b-form-datepicker v-model="novoCliente.dataNascimento" id="example-datepicker3" class="mb-2"></b-form-datepicker>
                     </div>
                     <div class="col-md-2">
                       <label class="form-label">Telefone</label>
@@ -397,40 +346,40 @@
                 <div class="row pb-3">
                   <div class="col-md-4">
                     <label class="form-label">Cidade</label>
-                    <input v-model="novoEndereco.cidade" type="text" class="form-control form-control-sm">
+                    <input v-model="novoEndereco.cidade.descricao" type="text" class="form-control form-control-sm">
                   </div>
                   <div class="col-md-2">
                     <label class="form-label">Estado</label>
                     <div class="dropdown">
-                      <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
+                      <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado.uf}}</button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AC'">AC</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AL'">AL</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AP'">AP</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AM'">AM</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'BA'">BA</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'CE'">CE</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'DF'">DF</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'ES'">ES</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'GO'">GO</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'MA'">MA</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'MT'">MT</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'MS'">MS</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'MG'">MG</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'PA'">PA</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'PB'">PB</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'PR'">PR</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'PE'">PE</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'PI'">PI</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'RJ'">RJ</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'RN'">RN</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'RS'">RS</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'RO'">RO</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'RR'">RR</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'SC'">SC</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'SP'">SP</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'SE'">SE</a></li>
-                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'TO'">TO</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'AC'">AC</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'AL'">AL</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'AP'">AP</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'AM'">AM</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'BA'">BA</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'CE'">CE</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'DF'">DF</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'ES'">ES</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'GO'">GO</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'MA'">MA</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'MT'">MT</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'MS'">MS</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'MG'">MG</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'PA'">PA</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'PB'">PB</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'PR'">PR</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'PE'">PE</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'PI'">PI</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'RJ'">RJ</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'RN'">RN</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'RS'">RS</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'RO'">RO</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'RR'">RR</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'SC'">SC</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'SP'">SP</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'SE'">SE</a></li>
+                        <li><a class="dropdown-item" href="#" @click="novoEndereco.estado.uf = 'TO'">TO</a></li>
                       </ul>
                     </div>
                   </div>
@@ -468,7 +417,7 @@
               <th @click="detalhesCliente(cliente)"><small>{{cliente.id}}</small></th>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.nome}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.cpf}}</small></td>
-              <td @click="detalhesCliente(cliente)"><small>{{cliente.dataNasc}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{formatarDataNascimento(cliente.dataNascimento)}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.genero}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.email}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.telefone.ddd}} {{cliente.telefone.numero}} ({{cliente.telefone.tipo}})</small></td>
@@ -497,8 +446,8 @@
                             <div class="col-md-2">
                               <label class="form-label">Gênero</label>
                               <div class="dropdown">
-                                <button style="width: 92.81px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton6" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.genero}}</button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton6">
+                                <button style="width: 92.81px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editGenero${cliente.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.genero}}</button>
+                                <ul class="dropdown-menu" :aria-labelledby="`editGenero${cliente.id}`">
                                   <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Masculino'">Masculino</a></li>
                                   <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Feminino'">Feminino</a></li>
                                   <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Outro'">Outro</a></li>
@@ -509,13 +458,13 @@
                           <div class="row pb-3">
                             <div class="col-md-7">
                               <label class="form-label">Data de Nascimento</label>
-                              <input v-model="editCliente.dataNasc" type="text" class="form-control form-control-sm">
+                              <b-form-datepicker v-model="editCliente.dataNascimento" id="example-datepicker2" class="mb-2"></b-form-datepicker>
                             </div>
                             <div class="col-md-2">
                               <label class="form-label">Telefone</label>
                               <div class="dropdown">
-                                <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton7" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.telefone.tipo}}</button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton7">
+                                <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editTelefoneTipo${cliente.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.telefone.tipo}}</button>
+                                <ul class="dropdown-menu" :aria-labelledby="`editTelefoneTipo${cliente.id}`">
                                   <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo = 'Residencial'">Residencial</a></li>
                                   <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Celular'">Celular</a></li>
                                   <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Comercial'">Comercial</a></li>

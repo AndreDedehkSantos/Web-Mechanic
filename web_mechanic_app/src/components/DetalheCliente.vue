@@ -22,17 +22,7 @@ export default {
         cobranca: false,
         entrega: false
       },
-      editEndereco: {
-        descricao: null,
-        tipo: "Selecione",
-        tipoLogradouro: "Selecione",
-        logradouro: null,
-        numero: null,
-        complemento: null,
-        bairro: null,
-        cidade: null,
-        estado: "Selecione"
-      },
+      editEndereco: {},
       novoCartao: {
         tipo: "Selecione",
         bandeira: "Selecione",
@@ -96,6 +86,25 @@ export default {
     },
     removerCartao(cliente_id, cartao){
       this.$parent.removerCartao(cliente_id, cartao);
+    },
+    formatarDataValidade(data){
+        let dataFormat = new Date(data);
+        let dataRetorno;
+        let mes = (dataFormat.getMonth()+1).toString().padStart(2, '0');
+        dataRetorno = mes + "/";
+        let ano  = dataFormat.getFullYear().toString().substr(2,2);
+        dataRetorno += ano
+        return dataRetorno;
+      },
+    numeroCartao(cartaoNumero){
+      var numero = []
+      numero = cartaoNumero.split('');
+      let numeroExibir = "Final ";
+      for(let i = numero.length-1; i > (numero.length - 5); i--)
+      {
+        numeroExibir += numero[i];
+      }
+      return numeroExibir;
     }
   },
 };
@@ -135,7 +144,7 @@ export default {
                   <p v-if="endereco.complemento" class="card-text pb-0 m-0">{{endereco.complemento}}</p>
                   <p v-else class="card-text pb-0 m-0">&nbsp;</p>
                   <p class="card-text pb-0 m-0">{{endereco.bairro}}</p>
-                  <p class="card-text pt-2 pb-0 m-0">{{endereco.cidade}}, {{endereco.estado}}</p>
+                  <p class="card-text pt-2 pb-0 m-0">{{endereco.cidade.descricao}}, {{endereco.estado.uf}}</p>
                   <p class="card-text pb-0 m-0">{{endereco.cep}}</p>
                   <p v-if="endereco.cobranca" class="card-text pt-2 pb-0 m-0"><b><u>Endereço de Cobrança</u></b></p>
                   <p v-else class="card-text pt-2 pb-0 m-0">&nbsp;</p>
@@ -155,8 +164,8 @@ export default {
                               <div class="col-md-2">
                                 <label class="form-label">Tipo</label>
                                 <div class="dropdown">
-                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">{{editEndereco.tipo}}</button>
-                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEnderecoTipo${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editEndereco.tipo}}</button>
+                                  <ul class="dropdown-menu" :aria-labelledby="`editEnderecoTipo${clienteDetalhe.id}`">
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Casa'">Casa</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Apartamento'">Apartamento</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Comércio'">Comércio</a></li>
@@ -172,8 +181,8 @@ export default {
                               <div class="col-md-2">
                                 <label class="form-label">Logradouro</label>
                                 <div class="dropdown">
-                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipoLogradouro}}</button>
-                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEnderecoTipoLogra${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipoLogradouro}}</button>
+                                  <ul class="dropdown-menu" :aria-labelledby="`editEnderecoTipoLogra${clienteDetalhe.id}`">
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Rua'">Rua</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Avenida'">Avenida</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Travessa'">Travessa</a></li>
@@ -211,8 +220,8 @@ export default {
                               <div class="col-md-2">
                                 <label class="form-label">Estado</label>
                                 <div class="dropdown">
-                                  <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton5" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
-                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton5">
+                                  <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEstado${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
+                                  <ul class="dropdown-menu" :aria-labelledby="`editEstado${clienteDetalhe.id}`">
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AC'">AC</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AL'">AL</a></li>
                                     <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AP'">AP</a></li>
@@ -251,13 +260,13 @@ export default {
                             <div class="row pb-3">
                               <div class="col-md-4">
                                 <div class="form-check">
-                                  <input v-model="editEndereco.cobranca" class="form-check-input" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
+                                  <input v-model="editEndereco.cobranca" class="form-check-input" :id="`editCobranca${clienteDetalhe.id}`" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
                                   <label class="form-check-label"> 
                                     Endereço de Cobrança
                                   </label>
                                 </div>
                                 <div class="form-check">
-                                  <input v-model="editEndereco.entrega" class="form-check-input" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
+                                  <input v-model="editEndereco.entrega" class="form-check-input" :id="`editCobranca${clienteDetalhe.id}`" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
                                   <label class="form-check-label">
                                     Endereço de Entrega
                                   </label>
@@ -268,7 +277,7 @@ export default {
                         </div>
                         <div class="modal-footer">
                           <button class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelarCadastroCliente()">Cancelar</button>
-                          <button class="btn btn-new" data-bs-dismiss="modal" @click="cadastrarCliente()">Concluir</button>
+                          <button class="btn btn-new" data-bs-dismiss="modal">Concluir</button>
                         </div>
                       </div>
                     </div>
@@ -291,8 +300,8 @@ export default {
                         <div class="col-md-2">
                           <label class="form-label">Tipo</label>
                           <div class="dropdown">
-                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton8" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipo}}</button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton8">
+                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="novoEnderecoTipo" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipo}}</button>
+                            <ul class="dropdown-menu" aria-labelledby="novoEnderecoTipo">
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipo = 'Casa'">Casa</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipo = 'Apartamento'">Apartamento</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipo = 'Comércio'">Comércio</a></li>
@@ -308,8 +317,8 @@ export default {
                         <div class="col-md-2">
                           <label class="form-label">Logradouro</label>
                           <div class="dropdown">
-                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton9" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipoLogradouro}}</button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton9">
+                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="novoEnderecoTipoLog" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipoLogradouro}}</button>
+                            <ul class="dropdown-menu" aria-labelledby="novoEnderecoTipoLog">
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipoLogradouro = 'Rua'">Rua</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipoLogradouro = 'Avenida'">Avenida</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.tipoLogradouro = 'Travessa'">Travessa</a></li>
@@ -347,8 +356,8 @@ export default {
                         <div class="col-md-2">
                           <label class="form-label">Estado</label>
                           <div class="dropdown">
-                            <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton10" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton10">
+                            <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="novoEnderecoEstado" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
+                            <ul class="dropdown-menu" aria-labelledby="novoEnderecoEstado">
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AC'">AC</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AL'">AL</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AP'">AP</a></li>
@@ -387,13 +396,13 @@ export default {
                       <div class="row pb-3">
                         <div class="col-md-4">
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <input v-model="novoEndereco.cobranca" class="form-check-input" type="checkbox" :id="`novoCobranca${clienteDetalhe.id}`">
                             <label class="form-check-label" for="flexCheckDefault">
                               Endereço de Cobrança
                             </label>
                           </div>
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                            <input v-model="novoEndereco.entrega" class="form-check-input" type="checkbox" :id="`novoEntrega${clienteDetalhe.id}`">
                             <label class="form-check-label" for="flexCheckChecked">
                               Endereço de Entrega
                             </label>
@@ -418,14 +427,13 @@ export default {
                 <div class="card-body">
                   <h5 class="card-title">{{cartao.tipo}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{cartao.bandeira}}</h6>
-                  <p class="card-text pb-0 m-0">{{cartao.numero}}</p>
-                  <p class="card-text pb-0 m-0">{{cartao.dataValidade}}</p>
-                  <p class="card-text pb-0 m-0">{{cartao.codigoVerificacao}}</p>
+                  <p class="card-text pb-0 m-0">{{numeroCartao(cartao.numero)}}</p>
+                  <p class="card-text pb-0 m-0">{{formatarDataValidade(cartao.dataValidade)}}</p>
                   <p class="card-text pb-0 m-0">{{cartao.nomeImpresso}}</p>
                   <div class="row pb-3 pt-2">
                     <div class="col-md-12">
                       <div class="form-check">
-                        <input v-model="cartao.preferencial" class="form-check-input" type="checkbox" :disabled="clienteDetalhe.cartoes.length < 2">
+                        <input v-model="cartao.preferencial" class="form-check-input" type="checkbox" :id="`preferencial${clienteDetalhe.id}`" :disabled="clienteDetalhe.cartoes.length < 2">
                         <label class="form-check-label">
                           Cartão Preferencial
                         </label>
@@ -450,8 +458,8 @@ export default {
                         <div class="col-md-6">
                           <label class="form-label">Tipo</label>
                           <div class="dropdown">
-                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton11" data-bs-toggle="dropdown" aria-expanded="false">{{novoCartao.tipo}}</button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton11">
+                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`novoTipoCartao${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoCartao.tipo}}</button>
+                            <ul class="dropdown-menu" :aria-labelledby="`novoTipoCartao${clienteDetalhe.id}`">
                               <li><a class="dropdown-item" href="#" @click="novoCartao.tipo = 'Crédito'">Crédito</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoCartao.tipo = 'Débido'">Débido</a></li>
                             </ul>
@@ -460,8 +468,8 @@ export default {
                         <div class="col-md-6">
                           <label class="form-label">Bandeira</label>
                           <div class="dropdown">
-                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuButton12" data-bs-toggle="dropdown" aria-expanded="false">{{novoCartao.bandeira}}</button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton12">
+                            <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`novoBandeiraCartao${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoCartao.bandeira}}</button>
+                            <ul class="dropdown-menu" :aria-labelledby="`novoBandeiraCartao${clienteDetalhe.id}`">
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Mastercard'">Mastercard</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Visa'">Visa</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'AmericanEX'">Elo</a></li>

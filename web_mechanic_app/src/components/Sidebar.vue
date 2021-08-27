@@ -43,16 +43,16 @@
           <div class="col-12 filter-box">
             <label class="form-label pb-4">Gênero</label><br>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-              <label class="form-check-label" for="inlineCheckbox1">M</label>
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1">
+              <label class="form-check-label">M</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-              <label class="form-check-label" for="inlineCheckbox2">F</label>
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox2">
+              <label class="form-check-label">F</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-              <label class="form-check-label" for="inlineCheckbox3">Outros</label>
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox3">
+              <label class="form-check-label">Outros</label>
             </div>
           </div>
         </div>
@@ -74,12 +74,12 @@
           <div class="col-12 filter-box">
             <label class="form-label pb-4">Status</label><br>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-              <label class="form-check-label" for="inlineCheckbox1">Ativo</label>
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox4">
+              <label class="form-check-label">Ativo</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-              <label class="form-check-label" for="inlineCheckbox2">Inativo</label>
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox5">
+              <label class="form-check-label">Inativo</label>
             </div>
           </div>
         </div>
