@@ -1,0 +1,14 @@
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\bin\Debug\netcoreapp2.2\web_mechanic_api.deps.json
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\bin\Debug\netcoreapp2.2\web_mechanic_api.runtimeconfig.json
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\bin\Debug\netcoreapp2.2\web_mechanic_api.runtimeconfig.dev.json
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\bin\Debug\netcoreapp2.2\web_mechanic_api.dll
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\bin\Debug\netcoreapp2.2\web_mechanic_api.pdb
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.csprojAssemblyReference.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.csproj.CoreCompileInputs.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.RazorAssemblyInfo.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.RazorAssemblyInfo.cs
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.AssemblyInfoInputs.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.AssemblyInfo.cs
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.RazorTargetAssemblyInfo.cache
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.dll
+D:\Documentos\EAD_ADS\7 ADS\Laboratório de Engenharia de Software\Web_Mechanic\web_mechanic_api\obj\Debug\netcoreapp2.2\web_mechanic_api.pdb
