@@ -1,6 +1,6 @@
 namespace web_mechanic_api.Models
 {
-    public class EntidadeDominio
+    public abstract class EntidadeDominio
     {
       public EntidadeDominio()
       {}

@@ -9,6 +9,9 @@ export default {
       detalheCartao: false,
       detalheTransacoes: false,
       exibeCard: false,
+      obj: {},
+      respostaEndereco: [],
+      exibirRespostaEndereco: false,
       novoEndereco: {
         descricao: null,
         tipo: "Selecione",
@@ -75,11 +78,20 @@ export default {
     editandoEndereco(endereco){
       this.editEndereco = endereco;
     },
-    cadastrarEndereco(cliente_id, endereco){
-      this.$parent.cadastrarEndereco(cliente_id, endereco);
+    cadastrarEndereco(){
+      this.$parent.cadastrarEndereco(this.clienteDetalhe, this.novoEndereco);
     },
     cadastrarCartao(cliente_id, cartao){
       this.$parent.cadastrarCartao(cliente_id, cartao);
+    },
+    exibirResultadoEndereco(resultado, objeto){
+      if(resultado != null){
+        this.respostaEndereco = resultado;
+      }else{
+        this.respostaEndereco.push("Endereço Inserido com Sucesso!");
+      }
+      this.exibirRespostaEndereco = true;
+      this.obj = objeto;
     },
     removerEndereco(cliente_id, endereco){
       this.$parent.removerEndereco(cliente_id, endereco);
@@ -294,6 +306,15 @@ export default {
                     <h5 class="modal-title" id="newEnderecoModalLabel">Novo Endereço</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
+                  <div v-if="exibeRespostaNovo && respostaEndereco.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Cliente Inserido com Sucesso!</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="respostaEndereco = []"></button>
+                  </div>
+                  <div v-if="exibeResposta && respostaEndereco.length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Erro ao Cadastrar Cliente!</strong>
+                    <p v-for="resp in respostaEndereco" :key="resp">{{resp}}</p>
+                    <button to="/Clientes" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="alterado = true;"></button>
+                  </div>
                   <div class="modal-body">
                     <form>
                       <div class=" row pb-3">
@@ -413,7 +434,7 @@ export default {
                   </div>
                   <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelarCadastroEndereco()">Cancelar</button>
-                    <button class="btn btn-new" data-bs-dismiss="modal" @click="cadastrarEndereco(clienteDetalhe.id, novoEndereco)">Cadastrar</button>
+                    <button class="btn btn-new" @click="cadastrarEndereco()">Cadastrar</button>
                   </div>
                 </div>
               </div>
@@ -472,9 +493,9 @@ export default {
                             <ul class="dropdown-menu" :aria-labelledby="`novoBandeiraCartao${clienteDetalhe.id}`">
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Mastercard'">Mastercard</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Visa'">Visa</a></li>
-                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'AmericanEX'">Elo</a></li>
-                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'AmericanEX'">Hipercard</a></li>
-                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'AmericanEX'">Maestro</a></li>
+                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Elo'">Elo</a></li>
+                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Hipercard'">Hipercard</a></li>
+                              <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'Maestro'">Maestro</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoCartao.bandeira = 'AmericanEX'">AmericanEX</a></li>
                             </ul>
                           </div>

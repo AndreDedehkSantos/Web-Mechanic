@@ -11,6 +11,9 @@
         novaSenha: null,
         confirmarSenha: null,
         fecharModal: false,
+        exibeRespostaNovo: false,
+        exibeRespostaAlterar: false,
+        resposta: [],
         exibindoCliente: {
           exibindo: false,
           id: null
@@ -49,7 +52,7 @@
           dataNascimento: null,
           genero: "Selecione",
           email: null,
-          senha: null,
+          senhas: [],
           telefone:{
             tipo: "Selecione",
             ddd: null,
@@ -83,18 +86,30 @@
       }
     },
     mounted() {
-      this.$http.get('https://localhost:5001/api/Cliente').then(res => res.json()).then(clientes => this.clientes = clientes);
+      this.listarClientes();
+      this.alterado = false;
     },
     methods: {
+      listarClientes(){
+        this.$http.get('https://localhost:5001/api/Cliente').then(res => res.json()).then(clientes => {
+          this.clientes = clientes;
+          this.clientes.forEach(element => {
+            var aux = element.dataNascimento.replace(" 00:00:00", "");
+            aux =  aux.replace("/", "");
+            aux = aux.replace("/", "");
+            var aux1 = aux.split('');
+            var dataEdit = aux1[4] + aux1[5] + aux1[6] + aux1[7] + "-" + aux1[2] + aux1[3] + "-" + aux1[0] + aux1[1];
+            element.dataNascimento = dataEdit;
+          });
+        });
+      },
       detalhesCliente(cliente){
         window.location.href = "#detalheDiv"
         this.$refs.detalheClienteView.detalhesCliente(cliente);
       },
       cadastrarCliente(){
         this.novoCliente.enderecos.push(this.novoEndereco);
-        this.novoCliente.id = 5;
-        this.novoCliente.id = 5;
-        console.log(this.novoCliente.dataNascimento); 
+        this.novoCliente.id = 0;
         var date = new Date(this.novoCliente.dataNascimento);
         var dateStr =
           date.getFullYear() + "-" +
@@ -104,23 +119,23 @@
           ("00" + date.getMinutes()).slice(-2) + ":" +
           ("00" + date.getSeconds()).slice(-2);
         this.novoCliente.dataNascimento = dateStr;
-        this.$http.post('https://localhost:5001/api/Cliente', this.novoCliente).then().then(function(res) {
-          let resultado = res.json();
-          alert("sucess");
-          return resultado;
-          }).catch( function(err){
-              alert("fail")
-              return console.log(err);
-          });
+        this.novoCliente.senhas.push(this.novaSenha);
+        this.novoCliente.senhas.push(this.confirmarSenha);
+        this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(res => {
+          this.clientes.push(res);
+          this.exibeRespostaNovo = true;
+        }, res => {
+          this.exibeRespostaNovo = true;
+          this.resposta = res.data.retornoString.split(",");
+        })
       },
-      cadastrarEndereco(cliente_id, endereco){
-        this.clientes.forEach(element => {
-          if(element.id == cliente_id){
-            endereco.id = element.enderecos.length + 1;
-            element.enderecos.push(endereco);
-          }
-        });
-        window.alert("Endereço cadastrado com sucesso!");
+      cadastrarEndereco(clienteDetalhe){
+        this.$http.post(`https://localhost:5001/api/Cliente/${clienteDetalhe.id}`, clienteDetalhe).then(res => res.json()).then(res => {
+          this.$refs.ClienteDetalhe.exibirResultadoEndereco(null, res);
+        }, res => {
+          let respostaEndereco = res.data[0].retornoString.split(",");
+          this.$refs.ClienteDetalhe.exibirResultadoEndereco(respostaEndereco, res);
+        })
       },
       cadastrarCartao(cliente_id, cartao){
         this.clientes.forEach(element => {
@@ -143,7 +158,17 @@
         this.novoEndereco.estado = "Selecione";
       },
       editarCliente(cliente){
+        this.resposta = [];
         this.editCliente = cliente;
+      },
+      finalizarEdicao(){
+        this.$http.put('https://localhost:5001/api/Cliente', this.editarCliente).then(res => res.json()).then(res => {
+          this.clientes.push(res);
+          this.exibeRespostaAlterar = true;
+        }, res => {
+          this.exibeRespostaAlterar = true;
+          this.resposta = res.data[0].retornoString.split(",");
+        })
       },
       concluirEdicao(cliente_id){
         this.clientes.forEach(element => {
@@ -171,17 +196,6 @@
           }
         });
         window.alert("Senha alterada com sucesso!");
-      },
-      formatarDataNascimento(data){
-        let dataFormat = new Date(data);
-        let dataRetorno;
-        let dia  = dataFormat.getDate().toString().padStart(2, '0');
-        dataRetorno = dia + "/";
-        let mes = (dataFormat.getMonth()+1).toString().padStart(2, '0');
-        dataRetorno += mes + "/";
-        let ano  = dataFormat.getFullYear();
-        dataRetorno += ano;
-        return dataRetorno;
       },
       removerEndereco(cliente_id, endereco){
         this.clientes.forEach(element => {
@@ -217,13 +231,22 @@
         <Sidebar/>
       </div>
       <div class="col-md-10 px-4 py-3">
-        <button class="btn btn-new" data-bs-toggle="modal" data-bs-target="#newClienteModal">Novo Cliente</button><br><br>
+        <button class="btn btn-new" data-bs-toggle="modal" data-bs-target="#newClienteModal" @click="resposta = []">Novo Cliente</button><br><br>
         <div class="modal fade" id="newClienteModal" tabindex="-1" aria-labelledby="newClienteModalLabel" aria-hidden="true">
-          <div class="modal-dialog  modal-lg">
+          <div class="modal-dialog modal-dialog-scrollable  modal-lg">
             <div class="modal-content">
               <div class="modal-header" style="color: white; background-color: rgba(10, 10, 10, 0.699)">
                 <h5 class="modal-title" id="newClienteModalLabel">Novo Cliente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div v-if="exibeRespostaNovo && resposta.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Cliente Inserido com Sucesso!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="resposta = []"></button>
+              </div>
+              <div v-if="exibeResposta && resposta.length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Erro ao Cadastrar Cliente!</strong>
+                <p v-for="resp in resposta" :key="resp">{{resp}}</p>
+                <button to="/Clientes" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="alterado = true;"></button>
               </div>
               <div class="modal-body">
                 <form>
@@ -251,7 +274,7 @@
                   <div class="row pb-3">
                     <div class="col-md-7">
                       <label class="form-label">Data de Nascimento</label>
-                      <b-form-datepicker v-model="novoCliente.dataNascimento" id="example-datepicker3" class="mb-2"></b-form-datepicker>
+                      <b-form-datepicker v-model="novoCliente.dataNascimento" id="example-datepickerNovo" class="mb-2"></b-form-datepicker>
                     </div>
                     <div class="col-md-2">
                       <label class="form-label">Telefone</label>
@@ -280,7 +303,7 @@
                     </div>
                     <div class="col-md-4">
                       <label class="form-label">Senha</label>
-                      <input v-model="novoCliente.senha" type="password" class="form-control form-control-sm">
+                      <input v-model="novaSenha" type="password" class="form-control form-control-sm">
                     </div>
                     <div class="col-md-4">
                       <label class="form-label">Confirmar Senha</label>
@@ -392,7 +415,7 @@
               </div>
               <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelarCadastroCliente()">Cancelar</button>
-                <button class="btn btn-new" data-bs-dismiss="modal" @click="cadastrarCliente()">Cadastrar</button>
+                <button class="btn btn-new" @click="cadastrarCliente()">Cadastrar</button>
               </div>
             </div>
           </div>
@@ -417,12 +440,13 @@
               <th @click="detalhesCliente(cliente)"><small>{{cliente.id}}</small></th>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.nome}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.cpf}}</small></td>
-              <td @click="detalhesCliente(cliente)"><small>{{formatarDataNascimento(cliente.dataNascimento)}}</small></td>
+              <td @click="detalhesCliente(cliente)"><small>{{cliente.dataNascimento}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.genero}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.email}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.telefone.ddd}} {{cliente.telefone.numero}} ({{cliente.telefone.tipo}})</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.ranking}}</small></td>
-              <td @click="detalhesCliente(cliente)"><small>{{cliente.status}}</small></td>
+              <td v-if="cliente.status" @click="detalhesCliente(cliente)"><small>Ativo</small></td>
+              <td v-else @click="detalhesCliente(cliente)"><small>Inativo</small></td>
               <td>
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal" @click="editarCliente(cliente)">Editar</button>&nbsp;
                 <div class="modal fade" id="editClienteModal" tabindex="-1" aria-labelledby="editClienteModalLabel" aria-hidden="true">
@@ -458,7 +482,7 @@
                           <div class="row pb-3">
                             <div class="col-md-7">
                               <label class="form-label">Data de Nascimento</label>
-                              <b-form-datepicker v-model="editCliente.dataNascimento" id="example-datepicker2" class="mb-2"></b-form-datepicker>
+                              <b-form-datepicker v-model="editCliente.dataNascimento" :id="`datepicker${cliente.id}`" class="mb-2"></b-form-datepicker>
                             </div>
                             <div class="col-md-2">
                               <label class="form-label">Telefone</label>
@@ -490,7 +514,7 @@
                       </div>
                       <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-new" data-bs-dismiss="modal" @click="concluirEdicao(cliente.id)">Concluir</button>
+                        <button class="btn btn-new" data-bs-dismiss="modal">Concluir</button>
                       </div>
                     </div>
                   </div>
@@ -533,7 +557,8 @@
         </table>
         <div class="row" id="detalheDiv">
           <ClienteDetalhe ref="detalheClienteView"/>
-        </div>
+        </div><!-- Button trigger modal -->
+        <div class="row" style="margin-top: 20px;">&nbsp;</div>
       </div>
     </div>
   </div>

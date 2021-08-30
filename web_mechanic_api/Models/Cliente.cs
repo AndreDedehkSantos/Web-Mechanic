@@ -11,11 +11,11 @@ namespace web_mechanic_api.Models
         public string genero { get; set; }
         public string dataNascimento { get; set; }
         public string email { get; set; }
-        public string senha { get; set; }
+        public List<string> senhas = new List<string>();
         public Telefone telefone { get; set; }
         public List<Endereco> enderecos { get; set; }
         public List<Cartao> cartoes { get; set; }
         public int ranking { get; set; }
-        public bool status { get;set; }
+        public bool status { get; set; }
     }
 }
