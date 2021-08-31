@@ -15,7 +15,7 @@ namespace web_mechanic_api.Dal
       this.connection = Connect();
     }
 
-    public void Alterar(EntidadeDominio entidade)
+    public EntidadeDominio Alterar(EntidadeDominio entidade)
     {
       var connection = Connect();
       var cmd = new MySqlCommand();
@@ -58,6 +58,7 @@ namespace web_mechanic_api.Dal
           cmd.Parameters.AddWithValue("@entrega", 0);
         }
         cmd.ExecuteNonQuery();
+        return endereco;
 
       }
       catch(Exception excessao)
@@ -73,7 +74,7 @@ namespace web_mechanic_api.Dal
       }
     }
 
-    public void Cadastrar(EntidadeDominio entidade)
+    public EntidadeDominio Cadastrar(EntidadeDominio entidade)
     {
       var connection = Connect();
       var cmd = new MySqlCommand();
@@ -116,9 +117,13 @@ namespace web_mechanic_api.Dal
         {
           cmd.Parameters.AddWithValue("@entrega", 0);
         }
+        cmd.Parameters.AddWithValue("@cidade", endereco.cidade.descricao);
+        cmd.Parameters.AddWithValue("@estado", endereco.estado.uf);
         cmd.Parameters.AddWithValue("@cliente_id", cliente.id);
         cmd.ExecuteNonQuery();
+        return cliente;
       }
+
       catch(Exception excessao)
       {
         throw excessao;
@@ -159,24 +164,26 @@ namespace web_mechanic_api.Dal
       }
     }
 
-    public List<EntidadeDominio> Listar()
-    {
-      throw new System.NotImplementedException();
-    }
-
-    public List<EntidadeDominio> Pesquisar(EntidadeDominio entidade, List<string> filtros)
+    public List<EntidadeDominio> Pesquisar(string[] filtros)
     {
       var cmd = new MySqlCommand();
       try
       {
-        Cliente cliente = (Cliente)entidade;
         connection.Open();
         cmd.Connection = connection;
-        cmd.CommandText = EnderecoQueries.pesquisar;
-        cmd.Prepare();
-        cmd.Parameters.AddWithValue("@cliente_id", cliente.id);
+        string query = EnderecoQueries.pesquisar_filtros;
+        for(int i = 0; i < filtros.Length; i++)
+        {
+          query += filtros[i];
+          if(i + 1 < filtros.Length)
+          {
+            query += " AND ";
+          }
+        }
+        query += ");";
+        cmd.CommandText = query;
         var resultado = cmd.ExecuteReader();
-        List<EntidadeDominio> listaEndereco = new List<EntidadeDominio>();
+        List<EntidadeDominio> enderecos = new List<EntidadeDominio>();
         while(resultado.Read())
         {
           Endereco endereco = new Endereco();
@@ -197,6 +204,7 @@ namespace web_mechanic_api.Dal
           {
             endereco.cobranca = false;
           }
+  
           if(Convert.ToInt32(resultado["entrega"]) == 1)
           {
              endereco.entrega = true;
@@ -205,15 +213,17 @@ namespace web_mechanic_api.Dal
           {
             endereco.entrega = false;
           }
+  
           Cidade cidade = new Cidade();
           cidade.descricao = resultado["cidade"].ToString();
           endereco.cidade = cidade;
           Estado estado = new Estado();
           estado.uf = resultado["estado"].ToString();
           endereco.estado = estado;
-          listaEndereco.Add(endereco);
+          enderecos.Add(endereco);
         }
-        return listaEndereco;
+        connection.Close();
+        return enderecos;
       }
       catch(Exception excessao)
       {
@@ -221,11 +231,12 @@ namespace web_mechanic_api.Dal
       }
       finally
       {
-        if(connection.State == ConnectionState.Open)
-        {
-          connection.Close();
-        }
+        connection.Close();
       }
+    }
+    public List<EntidadeDominio> Listar()
+    {
+      throw new System.NotImplementedException();
     }
   }
 }

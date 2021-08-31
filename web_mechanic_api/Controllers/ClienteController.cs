@@ -15,8 +15,8 @@ namespace web_mechanic_api.Controllers
         public ClienteController()
         {}
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("Listar")]
+        public IActionResult Listar()
         {
           try
           {
@@ -77,20 +77,20 @@ namespace web_mechanic_api.Controllers
         {
           try
           {
-            ClienteDal clienteDal = new ClienteDal();
-            EntidadeDominio clienteRetorno = clienteDal.Cadastrar(cliente);
-            if(clienteRetorno.GetType() == typeof(Cliente))
-            {
-              clienteRetorno = (Cliente)clienteRetorno;
-              return Ok(clienteRetorno);
-            }
-            else
-            {
-              Retorno retorno = (Retorno)clienteRetorno;
-              List<Retorno> listaRetorno = new List<Retorno>();
-              listaRetorno.Add(retorno);
-              return BadRequest(listaRetorno);
-            }
+            // ClienteDal clienteDal = new ClienteDal();
+            // EntidadeDominio clienteRetorno = clienteDal.Cadastrar(cliente);
+            // if(clienteRetorno.GetType() == typeof(Cliente))
+            // {
+            //   clienteRetorno = (Cliente)clienteRetorno;
+            //   return Ok(clienteRetorno);
+            // }
+            // else
+            // {
+            //   Retorno retorno = (Retorno)clienteRetorno;
+            //   List<Retorno> listaRetorno = new List<Retorno>();
+            //   listaRetorno.Add(retorno);
+              return BadRequest();
+            //}
           }
           catch (Exception excessao)
           {
@@ -103,20 +103,20 @@ namespace web_mechanic_api.Controllers
         {
           try
           {
-            ClienteDal clienteDal = new ClienteDal();
-            EntidadeDominio clienteRetorno = clienteDal.Cadastrar(cliente);
-            if(clienteRetorno.GetType() == typeof(Cliente))
-            {
-              clienteRetorno = (Cliente)clienteRetorno;
-              return Ok(clienteRetorno);
-            }
-            else
-            {
-              Retorno retorno = (Retorno)clienteRetorno;
-              List<Retorno> listaRetorno = new List<Retorno>();
-              listaRetorno.Add(retorno);
-              return BadRequest(listaRetorno);
-            }
+            // ClienteDal clienteDal = new ClienteDal();
+            // EntidadeDominio clienteRetorno = clienteDal.Cadastrar(cliente);
+            // if(clienteRetorno.GetType() == typeof(Cliente))
+            // {
+            //   clienteRetorno = (Cliente)clienteRetorno;
+            //   return Ok(clienteRetorno);
+            // }
+            // else
+            // {
+            //   Retorno retorno = (Retorno)clienteRetorno;
+            //   List<Retorno> listaRetorno = new List<Retorno>();
+            //   listaRetorno.Add(retorno);
+              return BadRequest();
+            //}
           }
           catch (Exception excessao)
           {

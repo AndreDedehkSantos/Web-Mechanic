@@ -15,7 +15,7 @@ namespace web_mechanic_api.Dal
       this.connection = Connect();
     }
 
-    public void Cadastrar(EntidadeDominio entidade)
+    public EntidadeDominio Cadastrar(EntidadeDominio entidade)
     {
       var connection = Connect();
       var cmd = new MySqlCommand();
@@ -42,6 +42,7 @@ namespace web_mechanic_api.Dal
           cmd.Parameters.AddWithValue("@preferencial", 0);
         }
         cmd.ExecuteNonQuery();
+        return cliente;
 
       }
       catch (Exception excessao)
@@ -57,10 +58,6 @@ namespace web_mechanic_api.Dal
       }
     }
 
-    public void Alterar(EntidadeDominio entidade)
-    {
-      throw new System.NotImplementedException();
-    }
 
     public void Deletar(EntidadeDominio entidade)
     {
@@ -75,6 +72,7 @@ namespace web_mechanic_api.Dal
         cmd.Prepare();
         cmd.Parameters.AddWithValue("@id", cartao.id);
         cmd.ExecuteNonQuery();
+        connection.Close();
       }
       catch (Exception excessao)
       {
@@ -82,31 +80,31 @@ namespace web_mechanic_api.Dal
       }
       finally
       {
-        if (connection.State == ConnectionState.Open)
-        {
-          connection.Close();
-        }
+        connection.Close();
       }
     }
 
-    public List<EntidadeDominio> Listar()
-    {
-      throw new System.NotImplementedException();
-    }
 
-    public List<EntidadeDominio> Pesquisar(EntidadeDominio entidade, List<string> filtros)
+    public List<EntidadeDominio> Pesquisar(string[] filtros)
     {
       var cmd = new MySqlCommand();
       try
       {
-        Cliente cliente = (Cliente)entidade;
         connection.Open();
         cmd.Connection = connection;
-        cmd.CommandText = CartaoQueries.pesquisar;
-        cmd.Prepare();
-        cmd.Parameters.AddWithValue("@cliente_id", cliente.id);
+        string query = CartaoQueries.pesquisar_filtros;
+        for(int i = 0; i < filtros.Length; i++)
+        {
+          query += filtros[i];
+          if(i + 1 < filtros.Length)
+          {
+            query += " AND ";
+          }
+        }
+        query += ");";
+        cmd.CommandText = query;
         var resultado = cmd.ExecuteReader();
-        List<EntidadeDominio> listaCartao = new List<EntidadeDominio>();
+        List<EntidadeDominio> cartoes = new List<EntidadeDominio>();
         while (resultado.Read())
         {
           Cartao cartao = new Cartao();
@@ -114,7 +112,7 @@ namespace web_mechanic_api.Dal
           cartao.bandeira = resultado["bandeira"].ToString();
           cartao.tipo = resultado["tipo"].ToString();
           cartao.numero = resultado["numero"].ToString();
-          cartao.dataValidade = Convert.ToDateTime(resultado["dataValidade"]);
+          cartao.dataValidade = resultado["dataValidade"].ToString();
           cartao.codigoVerificacao = resultado["codigoVerificacao"].ToString();
           cartao.nomeImpresso = resultado["nomeImpresso"].ToString();
           if (Convert.ToInt32(resultado["preferencial"]) == 1)
@@ -125,21 +123,28 @@ namespace web_mechanic_api.Dal
           {
             cartao.preferencial = false;
           }
-          listaCartao.Add(cartao);
+          cartoes.Add(cartao);
         }
-        return listaCartao;
+        connection.Close();
+        return cartoes;
       }
-      catch (Exception excessao)
+      catch(Exception excessao)
       {
         throw excessao;
       }
       finally
       {
-        if (connection.State == ConnectionState.Open)
-        {
-          connection.Close();
-        }
+        connection.Close();
       }
+    }
+    public EntidadeDominio Alterar(EntidadeDominio entidade)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public List<EntidadeDominio> Listar()
+    {
+      throw new System.NotImplementedException();
     }
   }
 }

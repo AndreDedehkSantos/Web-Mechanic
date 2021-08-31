@@ -12,6 +12,7 @@
         confirmarSenha: null,
         fecharModal: false,
         exibeRespostaNovo: false,
+        exibeRespostaNovoErro: false,
         exibeRespostaAlterar: false,
         resposta: [],
         exibindoCliente: {
@@ -21,15 +22,15 @@
         clientes: [],
         novoEndereco: {
           id: 1,
-          descricao: null,
+          descricao: "",
           tipo: "Selecione",
           tipoLogradouro: "Selecione",
-          logradouro: null,
-          numero: null,
-          complemento: null,
-          bairro: null,
+          logradouro: "",
+          numero: "",
+          complemento: "",
+          bairro: "",
           cidade: {
-            descricao: null
+            descricao: ""
           },
           estado: {
             uf: "Selecione"
@@ -40,23 +41,23 @@
         novoCartao: {
           tipo: "Selecione",
           bandeira: "Selecione",
-          numero: null,
-          dataValidade: null,
-          codigoVerificacao: null,
-          nomeImpresso: null
+          numero: "",
+          dataValidade: "",
+          codigoVerificacao: "",
+          nomeImpresso: ""
         },
         novoCliente: {
-          id: null,
-          nome: null,
-          cpf: null,
-          dataNascimento: null,
+          id: 0,
+          nome: "",
+          cpf: "",
+          dataNascimento: "",
           genero: "Selecione",
-          email: null,
+          email: "",
           senhas: [],
           telefone:{
             tipo: "Selecione",
-            ddd: null,
-            numero: null
+            ddd: "",
+            numero: ""
           },
           ranking: 0,
           status: true,
@@ -65,17 +66,17 @@
           transacoes: []
         },
          editCliente: {
-          id: null,
-          nome: null,
-          cpf: null,
-          dataNascimento: null,
+          id: 0,
+          nome: "",
+          cpf: "",
+          dataNascimento: "",
           genero: "Selecione",
-          email: null,
-          senha: null,
+          email: "",
+          senha: "",
           telefone:{
             tipo: "Selecione",
-            ddd: null,
-            numero: null
+            ddd: "",
+            numero: ""
           },
           ranking: 0,
           status: "Ativo",
@@ -91,7 +92,7 @@
     },
     methods: {
       listarClientes(){
-        this.$http.get('https://localhost:5001/api/Cliente').then(res => res.json()).then(clientes => {
+        this.$http.get('https://localhost:5001/api/Cliente/Listar').then(res => res.json()).then(clientes => {
           this.clientes = clientes;
           this.clientes.forEach(element => {
             var aux = element.dataNascimento.replace(" 00:00:00", "");
@@ -121,12 +122,11 @@
         this.novoCliente.dataNascimento = dateStr;
         this.novoCliente.senhas.push(this.novaSenha);
         this.novoCliente.senhas.push(this.confirmarSenha);
-        this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(res => {
-          this.clientes.push(res);
+        this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(function() {
           this.exibeRespostaNovo = true;
         }, res => {
-          this.exibeRespostaNovo = true;
-          this.resposta = res.data.retornoString.split(",");
+          this.resposta = res.body.retornoString;
+          this.exibeRespostaNovoErro = true;
         })
       },
       cadastrarEndereco(clienteDetalhe){
@@ -145,7 +145,7 @@
           }
         });
         window.alert("Cartão cadastrado com sucesso!");
-      },  
+      },
       cancelarCadastroEndereco(){
         this.novoEndereco.descricao = null;
         this.novoEnderecotipo = "Selecione";
@@ -231,7 +231,7 @@
         <Sidebar/>
       </div>
       <div class="col-md-10 px-4 py-3">
-        <button class="btn btn-new" data-bs-toggle="modal" data-bs-target="#newClienteModal" @click="resposta = []">Novo Cliente</button><br><br>
+        <button class="btn btn-new" data-bs-toggle="modal" data-bs-target="#newClienteModal">Novo Cliente</button><br><br>
         <div class="modal fade" id="newClienteModal" tabindex="-1" aria-labelledby="newClienteModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-scrollable  modal-lg">
             <div class="modal-content">
@@ -239,14 +239,13 @@
                 <h5 class="modal-title" id="newClienteModalLabel">Novo Cliente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div v-if="exibeRespostaNovo && resposta.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
+               <div v-if="exibeRespostaNovo && resposta.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Cliente Inserido com Sucesso!</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="resposta = []"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="$router.go('Clientes')"></button>
               </div>
-              <div v-if="exibeResposta && resposta.length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
+              <div v-if="exibeRespostaNovoErro" class="alert alert-danger" role="alert">
                 <strong>Erro ao Cadastrar Cliente!</strong>
                 <p v-for="resp in resposta" :key="resp">{{resp}}</p>
-                <button to="/Clientes" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="alterado = true;"></button>
               </div>
               <div class="modal-body">
                 <form>

@@ -7,9 +7,7 @@ namespace web_mechanic_api.Dal
     {
       EntidadeDominio Cadastrar(EntidadeDominio entidade);
       List<EntidadeDominio> Listar();
-      List<EntidadeDominio> Pesquisar(EntidadeDominio entidade, string[] filtros);
-
-      List<EntidadeDominio> Pesquisar(EntidadeDominio entidade);
+      List<EntidadeDominio> Pesquisar(string[] filtros);
       EntidadeDominio Alterar(EntidadeDominio entidade);
       void Deletar(EntidadeDominio entidade);
     }

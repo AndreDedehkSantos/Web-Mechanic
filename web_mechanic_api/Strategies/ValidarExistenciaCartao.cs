@@ -13,7 +13,7 @@ namespace web_mechanic_api.Strategies
       Cartao cartao = cliente.cartoes[cliente.cartoes.Count - 1];
       CartaoDal cartaoDal = new CartaoDal();
       string[] filtros = {"numero = " + cartao.numero};
-      List<EntidadeDominio> resultadoPesquisa = cartaoDal.Pesquisar(cliente, filtros);
+      List<EntidadeDominio> resultadoPesquisa = cartaoDal.Pesquisar(filtros);
       if(resultadoPesquisa.Count > 0)
       {
         List<string> erroExistencia = new List<string>();

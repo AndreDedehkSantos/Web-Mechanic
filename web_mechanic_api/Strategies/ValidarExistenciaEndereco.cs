@@ -14,7 +14,7 @@ namespace web_mechanic_api.Strategies
       List<string> erroExistencia = new List<string>();
       EnderecoDal enderecoDal = new EnderecoDal();
       string[] filtros = {"cep = " + endereco.cep, "numero = " + endereco.numero, "complemento = " + endereco.complemento};
-      List<EntidadeDominio> resultadoPesquisa = enderecoDal.Pesquisar(cliente, filtros);
+      List<EntidadeDominio> resultadoPesquisa = enderecoDal.Pesquisar(filtros);
       if(resultadoPesquisa.Count > 0)
       {
         erroExistencia.Add("Endereço já cadastrado");

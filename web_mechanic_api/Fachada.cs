@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using web_mechanic_api.Dal;
 using web_mechanic_api.Models;
@@ -19,11 +20,13 @@ namespace web_mechanic_api
       ValidarTelefoneCliente validarTelefoneCliente = new ValidarTelefoneCliente();
       ValidarEndereco validarEndereco = new ValidarEndereco();
       ValidarSenhaCliente validarSenhaCliente = new ValidarSenhaCliente();
+      CriptografarSenha criptSenha = new CriptografarSenha();
       cadastrarClienteStrategies.Add(validardadosCliente);
       cadastrarClienteStrategies.Add(validarExCliente);
       cadastrarClienteStrategies.Add(validarTelefoneCliente);
       cadastrarClienteStrategies.Add(validarEndereco);
       cadastrarClienteStrategies.Add(validarSenhaCliente);
+      cadastrarClienteStrategies.Add(criptSenha);
 
       ValidarEnderecoCobEnt validarEndCobEnt = new ValidarEnderecoCobEnt();
       ValidarExistenciaEndereco validarExEndereco = new ValidarExistenciaEndereco();
@@ -41,41 +44,37 @@ namespace web_mechanic_api
     }
     public EntidadeDominio Cadastrar(EntidadeDominio entidade)
     {
-      switch(entidade.GetType().Name)
+      try
       {
-        case "Cliente":
-          Cliente cliente = (Cliente)entidade;
-          List<EntidadeDominio> validacoes = new List<EntidadeDominio>();
-          List<string> errosValidacao = new List<string>();
-          foreach(IStrategy strategy in cadastrarClienteStrategies)
-          {
-            validacoes.Add(strategy.Processar(cliente));
-          }
-          foreach(EntidadeDominio validacao in validacoes)
-          {
-            if(validacao.GetType() == typeof(Retorno))
+        switch(entidade.GetType().Name)
+        {
+          case "Cliente":
+            Cliente cliente = (Cliente)entidade;
+            List<EntidadeDominio> validacoes = new List<EntidadeDominio>();
+            List<string> errosValidacao = new List<string>();
+            int i = 1;
+            foreach(IStrategy strategy in cadastrarClienteStrategies)
             {
-              Retorno erros = (Retorno)validacao;
-              foreach(string erro in erros.retornoString)
+              Console.WriteLine("Valida " + i);
+              EntidadeDominio validacao = strategy.Processar(cliente);
+              if(validacao.GetType() == typeof(Retorno))
               {
-                errosValidacao.Add(erro);
+                return validacao;
               }
-            }
-          }
-          if(errosValidacao.Count > 0)
-          {
-            Retorno retorno = new Retorno(errosValidacao);
-            return retorno;
-          }
-          else
-          {
+              i++;
+            } 
             ClienteDal clienteDal = new ClienteDal();
+            Cliente clienteRetorno = new Cliente();
             clienteDal.Cadastrar(cliente);
             return cliente;
-          }
-
+            
           default:
             return null;
+        }
+      }
+      catch(Exception excessao)
+      {
+        throw excessao;
       }
     }
     public List<EntidadeDominio> Listar()

@@ -9,10 +9,11 @@ namespace web_mechanic_api.Strategies
     {
       public EntidadeDominio Processar(EntidadeDominio entidade)
       {
-        Endereco endereco = (Endereco)entidade;
+        Cliente cliente = (Cliente)entidade;
+        Endereco endereco = cliente.enderecos[0];
         List<string> erroEndereco = new List<string>();
 
-        string[] tiposEndereco = {"Residencia", "Apartamento", "Comércio"};
+        string[] tiposEndereco = {"Casa", "Apartamento", "Comércio"};
         if(Array.IndexOf(tiposEndereco, endereco.tipo) == -1)
         {
           erroEndereco.Add("Tipo de Endereço Inválido!");

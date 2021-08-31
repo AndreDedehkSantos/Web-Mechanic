@@ -21,9 +21,12 @@ namespace web_mechanic_api.Strategies
         {
           erroDadosCliente.Add("CPF é um Campo Obrigatório!");
         }
-         if(cliente.cpf.Length != 11)
+        else
         {
-          erroDadosCliente.Add("CPF Inválido!");
+          if(cliente.cpf.Length != 11)
+          {
+            erroDadosCliente.Add("CPF Inválido!");
+          }
         }
         if(string.IsNullOrEmpty(cliente.dataNascimento))
         {
@@ -40,6 +43,7 @@ namespace web_mechanic_api.Strategies
         }
         if(erroDadosCliente.Count > 0)
         {
+          Console.WriteLine("Cliente tá errado!");
           Retorno retorno = new Retorno(erroDadosCliente);
           return retorno;
         }

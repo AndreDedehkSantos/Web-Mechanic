@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using web_mechanic_api.Models;
 using web_mechanic_api.ViewModels;
 
@@ -16,19 +17,30 @@ namespace web_mechanic_api.Strategies
       string[] tiposTelefone = {"Residencial", "Celular", "Comercial"};
       if(Array.IndexOf(tiposTelefone, cliente.telefone.tipo) == -1)
       {
-        erroTelefone.Add("Tipo de Telefone Inválido!");
+        erroTelefone.Add("Tipo do Telefone Inválido!");
       }
+      bool numeros = Regex.IsMatch(cliente.telefone.ddd, (@"[^0-9]"));
       if(String.IsNullOrEmpty(cliente.telefone.ddd))
       {
-       erroTelefone.Add("Tipo de Telefone Inválido!");
+       erroTelefone.Add("DDD do Telefone é um Campo Obrigatório!");
+      }
+      else
+      {
+        if(cliente.telefone.ddd.Length != 2 || numeros)
+        {
+          erroTelefone.Add("DDD do Telefone Inválido!");
+        }
       }
       if(String.IsNullOrEmpty(cliente.telefone.numero))
       {
-        erroTelefone.Add("Tipo de Telefone Inválido!");
+        erroTelefone.Add("Número do Telefone é um Campo Obrigatório!");
       }
-      if(cliente.telefone.numero.Length < 8 || cliente.telefone.numero.Length > 9)
+      else
       {
-        erroTelefone.Add("Tipo de Telefone Inválido!");
+        if(cliente.telefone.numero.Length < 8 || cliente.telefone.numero.Length > 9 || numeros)
+        {
+          erroTelefone.Add("Número do Telefone Inválido!");
+        }
       }
       if(erroTelefone.Count > 0)
       {

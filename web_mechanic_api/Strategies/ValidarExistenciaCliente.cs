@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using web_mechanic_api.Dal;
 using web_mechanic_api.Models;
@@ -12,14 +13,14 @@ namespace web_mechanic_api.Strategies
       Cliente cliente = (Cliente)entidade;
       List<string> erroExistencia = new List<string>();
       ClienteDal clienteDal = new ClienteDal();
-      string[] filtros = {"cpf = " + cliente.cpf};
-      List<EntidadeDominio> retornoPesquisa = clienteDal.Pesquisar(cliente, filtros);
+      string[] filtros = {"cpf = '" + cliente.cpf + "'"};
+      List<EntidadeDominio> retornoPesquisa = clienteDal.Pesquisar(filtros);
       if(retornoPesquisa.Count > 0)
       {
         erroExistencia.Add("CPF já Cadastrado!");
       }
-      filtros[0] = cliente.email;
-      retornoPesquisa = clienteDal.Pesquisar(cliente, filtros);
+      filtros[0] = "email = '" + cliente.email + "'";
+      retornoPesquisa = clienteDal.Pesquisar(filtros);
       if(retornoPesquisa.Count > 0)
       {
         erroExistencia.Add("Email já Cadastrado!");
@@ -29,7 +30,8 @@ namespace web_mechanic_api.Strategies
         Retorno retorno = new Retorno(erroExistencia);
         return retorno;
       }
-      else{
+      else
+      {
         return cliente;
       }
     }
