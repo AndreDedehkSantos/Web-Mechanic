@@ -1,10 +1,14 @@
 <script>
   import Sidebar from "./Sidebar.vue";
   import ClienteDetalhe from "./DetalheCliente.vue";
+  import EditarCliente from "./EditCliente.vue";
+  import EditarSenha from "./EditSenha.vue";
   export default {
     components:{
       Sidebar,
-      ClienteDetalhe
+      ClienteDetalhe,
+      EditarCliente,
+      EditarSenha
     },
     data(){
       return{
@@ -13,7 +17,6 @@
         fecharModal: false,
         exibeRespostaNovo: false,
         exibeRespostaNovoErro: false,
-        exibeRespostaAlterar: false,
         resposta: [],
         exibindoCliente: {
           exibindo: false,
@@ -38,14 +41,6 @@
           cobranca: true,
           entrega: true
         },
-        novoCartao: {
-          tipo: "Selecione",
-          bandeira: "Selecione",
-          numero: "",
-          dataValidade: "",
-          codigoVerificacao: "",
-          nomeImpresso: ""
-        },
         novoCliente: {
           id: 0,
           nome: "",
@@ -65,30 +60,10 @@
           cartoes: [],
           transacoes: []
         },
-         editCliente: {
-          id: 0,
-          nome: "",
-          cpf: "",
-          dataNascimento: "",
-          genero: "Selecione",
-          email: "",
-          senha: "",
-          telefone:{
-            tipo: "Selecione",
-            ddd: "",
-            numero: ""
-          },
-          ranking: 0,
-          status: "Ativo",
-          enderecos: [],
-          cartoes: [],
-          transacoes: []
-        }
       }
     },
     mounted() {
       this.listarClientes();
-      this.alterado = false;
     },
     methods: {
       listarClientes(){
@@ -111,30 +86,23 @@
       cadastrarCliente(){
         this.novoCliente.enderecos.push(this.novoEndereco);
         this.novoCliente.id = 0;
-        var date = new Date(this.novoCliente.dataNascimento);
-        var dateStr =
-          date.getFullYear() + "-" +
-          ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
-          ("00" + date.getDate()).slice(-2) + " " +
-          ("00" + date.getHours()).slice(-2) + ":" +
-          ("00" + date.getMinutes()).slice(-2) + ":" +
-          ("00" + date.getSeconds()).slice(-2);
-        this.novoCliente.dataNascimento = dateStr;
+        if(this.novoCliente.dataNascimento != ""){
+          var date = new Date(this.novoCliente.dataNascimento);
+          var dateStr =
+            date.getFullYear() + "-" +
+            ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
+            ("00" + date.getDate()).slice(-2)
+          this.novoCliente.dataNascimento = dateStr;
+        }
         this.novoCliente.senhas.push(this.novaSenha);
         this.novoCliente.senhas.push(this.confirmarSenha);
-        this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(function() {
+        this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(res => {
           this.exibeRespostaNovo = true;
+          this.clientes.push(res.cliente);
+          this.detalhesCliente(res.cliente);
         }, res => {
           this.resposta = res.body.retornoString;
           this.exibeRespostaNovoErro = true;
-        })
-      },
-      cadastrarEndereco(clienteDetalhe){
-        this.$http.post(`https://localhost:5001/api/Cliente/${clienteDetalhe.id}`, clienteDetalhe).then(res => res.json()).then(res => {
-          this.$refs.ClienteDetalhe.exibirResultadoEndereco(null, res);
-        }, res => {
-          let respostaEndereco = res.data[0].retornoString.split(",");
-          this.$refs.ClienteDetalhe.exibirResultadoEndereco(respostaEndereco, res);
         })
       },
       cadastrarCartao(cliente_id, cartao){
@@ -146,56 +114,40 @@
         });
         window.alert("Cartão cadastrado com sucesso!");
       },
-      cancelarCadastroEndereco(){
-        this.novoEndereco.descricao = null;
-        this.novoEnderecotipo = "Selecione";
-        this.novoEndereco.tipoLogradouro = "Selecione";
-        this.novoEndereco.logradouro = null;
-        this.novoEndereco.numero = null;
-        this.novoEndereco.complemento = null;
-        this.novoEndereco.bairro = null;
-        this.novoEndereco.cidade = null;
-        this.novoEndereco.estado = "Selecione";
-      },
       editarCliente(cliente){
-        this.resposta = [];
-        this.editCliente = cliente;
+        this.$refs.editclienteview.editarCliente(cliente);
       },
-      finalizarEdicao(){
-        this.$http.put('https://localhost:5001/api/Cliente', this.editarCliente).then(res => res.json()).then(res => {
-          this.clientes.push(res);
-          this.exibeRespostaAlterar = true;
-        }, res => {
-          this.exibeRespostaAlterar = true;
-          this.resposta = res.data[0].retornoString.split(",");
-        })
+      concluirEditar(){
+        this.listarClientes();
       },
-      concluirEdicao(cliente_id){
-        this.clientes.forEach(element => {
-          if(element.id == cliente_id){
-            element = this.editCliente;
-          }
-        });
+      cancelarCadastroEndereco(){
+        this.novoEndereco.id = 1;
+        this.novoEndereco.descricao = "";
+        this.novoEndereco.tipo = "Selecione";
+        this.novoEndereco.tipoLogradouro = "Selecione";
+        this.novoEndereco.logradouro = "";
+        this.novoEndereco.numero = "";
+        this.novoEndereco.complemento = "";
+        this.novoEndereco.bairro = "";
+        this.novoEndereco.cidade.descricao = "";
+        this.novoEndereco.estado.uf = "Selecione";
+        this.novoEndereco.cobranca = true;
+        this.novoEndereco.entrega = true;
       },
       cancelarCadastroCliente(){
-        this.novoCliente.nome = null;
-        this.cpf = null
-        this.novoCliente.dataNasc = null,
+        this.novoCliente.nome = "";
+        this.novoCliente.cpf = ""
+        this.novoCliente.dataNasc = "",
         this.novoCliente.genero = "Selecione",
-        this.novoCliente.email = null,
-        this.senha = null;
+        this.novoCliente.email = "",
+        this.senha = "";
         this.telefone.tipo = "Selecione",
-        this.telefone.ddd = null;
-        this.telefone.numero = null;
+        this.telefone.ddd = "";
+        this.telefone.numero = "";
         this.cancelarCadastroEndereco();
       },
       alterarSenha(cliente_id){
-        this.clientes.forEach(element => {
-          if(element.id == cliente_id){
-            element.senha = this.novaSenha;
-          }
-        });
-        window.alert("Senha alterada com sucesso!");
+        this.$refs.editSenhaview.alterarSenha(cliente_id);
       },
       removerEndereco(cliente_id, endereco){
         this.clientes.forEach(element => {
@@ -239,9 +191,9 @@
                 <h5 class="modal-title" id="newClienteModalLabel">Novo Cliente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-               <div v-if="exibeRespostaNovo && resposta.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
+              <div v-if="exibeRespostaNovo && resposta.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Cliente Inserido com Sucesso!</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="$router.go('Clientes')"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               <div v-if="exibeRespostaNovoErro" class="alert alert-danger" role="alert">
                 <strong>Erro ao Cadastrar Cliente!</strong>
@@ -271,7 +223,7 @@
                     </div>
                   </div>  
                   <div class="row pb-3">
-                    <div class="col-md-7">
+                    <div class="col-md-4">
                       <label class="form-label">Data de Nascimento</label>
                       <b-form-datepicker v-model="novoCliente.dataNascimento" id="example-datepickerNovo" class="mb-2"></b-form-datepicker>
                     </div>
@@ -290,7 +242,7 @@
                       <label class="form-label">DDD</label>
                       <input v-model="novoCliente.telefone.ddd" type="text" class="form-control form-control-sm">
                     </div>
-                     <div class="col-md-2">
+                     <div class="col-md-3">
                       <label class="form-label">Número</label>
                       <input v-model="novoCliente.telefone.numero" type="text" class="form-control form-control-sm">
                     </div>
@@ -435,7 +387,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="cliente in clientes" :key="cliente.id">
+            <tr v-for="cliente in this.clientes" :key="cliente.id">
               <th @click="detalhesCliente(cliente)"><small>{{cliente.id}}</small></th>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.nome}}</small></td>
               <td @click="detalhesCliente(cliente)"><small>{{cliente.cpf}}</small></td>
@@ -447,113 +399,15 @@
               <td v-if="cliente.status" @click="detalhesCliente(cliente)"><small>Ativo</small></td>
               <td v-else @click="detalhesCliente(cliente)"><small>Inativo</small></td>
               <td>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal" @click="editarCliente(cliente)">Editar</button>&nbsp;
-                <div class="modal fade" id="editClienteModal" tabindex="-1" aria-labelledby="editClienteModalLabel" aria-hidden="true">
-                  <div class="modal-dialog  modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header" style="color: white; background-color: rgba(10, 10, 10, 0.699)">
-                        <h5 class="modal-title" id="editClienteModalLabel">Editar Cliente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form>
-                          <div class="row pb-3">
-                            <div class="col-md-7">
-                              <label class="form-label">Nome</label>
-                              <input v-model="editCliente.nome" type="text" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-md-3">
-                              <label class="form-label">CPF</label>
-                              <input v-model="editCliente.cpf" type="text" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-md-2">
-                              <label class="form-label">Gênero</label>
-                              <div class="dropdown">
-                                <button style="width: 92.81px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editGenero${cliente.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.genero}}</button>
-                                <ul class="dropdown-menu" :aria-labelledby="`editGenero${cliente.id}`">
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Masculino'">Masculino</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Feminino'">Feminino</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.genero = 'Outro'">Outro</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>  
-                          <div class="row pb-3">
-                            <div class="col-md-7">
-                              <label class="form-label">Data de Nascimento</label>
-                              <b-form-datepicker v-model="editCliente.dataNascimento" :id="`datepicker${cliente.id}`" class="mb-2"></b-form-datepicker>
-                            </div>
-                            <div class="col-md-2">
-                              <label class="form-label">Telefone</label>
-                              <div class="dropdown">
-                                <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editTelefoneTipo${cliente.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editCliente.telefone.tipo}}</button>
-                                <ul class="dropdown-menu" :aria-labelledby="`editTelefoneTipo${cliente.id}`">
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo = 'Residencial'">Residencial</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Celular'">Celular</a></li>
-                                  <li><a class="dropdown-item" href="#" @click="editCliente.telefone.tipo  = 'Comercial'">Comercial</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <div class="col-md-1">
-                              <label class="form-label">DDD</label>
-                              <input v-model="editCliente.telefone.ddd" type="text" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-md-2">
-                              <label class="form-label">Número</label>
-                              <input v-model="editCliente.telefone.numero" type="text" class="form-control form-control-sm">
-                            </div>
-                          </div>
-                          <div class="row pb-3">
-                            <div class="col-md-4">
-                              <label class="form-label">E-mail</label>
-                              <input v-model="editCliente.email" type="text" class="form-control form-control-sm">
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                      <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-new" data-bs-dismiss="modal">Concluir</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button class="btn btn-secondary btn-sm"  data-bs-toggle="modal" data-bs-target="#editSenhaModal" @click="confirmarSenha = null">Alterar Senha</button>
-                <div class="modal fade" id="editSenhaModal" tabindex="-1" aria-labelledby="newCartaoModalLabel" aria-hidden="true">
-                  <div class="modal-dialog  modal-sm">
-                    <div class="modal-content">
-                      <div class="modal-header" style="color: white; background-color: rgba(10, 10, 10, 0.699)">
-                        <h5 class="modal-title" id="newCartaoModalLabel">Alterar Senha</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form>
-                          <div class="row pb-3">
-                             <div class="col-md-12">
-                              <label class="form-label">Nova Senha</label>
-                              <input v-model="novaSenha" type="password" class="form-control form-control-sm">
-                            </div>
-                          </div>
-                          <div class="row pb-3">
-                             <div class="col-md-12">
-                              <label class="form-label">Confirmar Senha</label>
-                              <input v-model="confirmarSenha" type="password" class="form-control form-control-sm">
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                      <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-new" data-bs-dismiss="modal" @click="alterarSenha(cliente.id)">Concluir</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal" @click="editarCliente(cliente.id)">Editar</button>&nbsp;
+                <button class="btn btn-secondary btn-sm"  data-bs-toggle="modal" data-bs-target="#editSenhaModal" @click="alterarSenha(cliente.id)">Alterar Senha</button>
                 <button class="btn btn-danger btn-sm" style="margin-left: 5px;" @click="cliente.status = 'Inativo'">Inativar</button>
               </td>
             </tr>
           </tbody>
         </table>
+        <EditarCliente ref="editclienteview" />
+        <EditarSenha ref="editSenhaview" />
         <div class="row" id="detalheDiv">
           <ClienteDetalhe ref="detalheClienteView"/>
         </div><!-- Button trigger modal -->
@@ -579,8 +433,7 @@
     border-radius: 5px;
   }
   .btn-new:hover{
-    background-color: white;
-    color: rgba(204, 204, 8, 0.712);
+    background-color: rgba(199, 199, 10, 0.836);
   }
   .show-client{
     font: bold;

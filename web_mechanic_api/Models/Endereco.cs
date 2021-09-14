@@ -16,6 +16,7 @@ namespace web_mechanic_api.Models
     public Estado estado { get; set; }
     public bool cobranca { get; set; }
     public bool entrega { get; set; }
+    public int cliente_id {get; set; }
 
   }
 }

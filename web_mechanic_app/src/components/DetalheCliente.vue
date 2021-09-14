@@ -8,24 +8,46 @@ export default {
       detalheEndereco: false,
       detalheCartao: false,
       detalheTransacoes: false,
+      exibeRespostaEnderecoNovo: false,
+      exibeRespostaEnderecoNovoErro: false,
       exibeCard: false,
       obj: {},
       respostaEndereco: [],
       exibirRespostaEndereco: false,
       novoEndereco: {
-        descricao: null,
+        descricao: "",
         tipo: "Selecione",
         tipoLogradouro: "Selecione",
-        logradouro: null,
-        numero: null,
-        complemento: null,
-        bairro: null,
-        cidade: null,
-        estado: "Selecione",
+        logradouro: "",
+        numero: "",
+        complemento: "",
+        bairro: "",
+        cidade:{
+          descricao: "",
+        },
+        estado: {
+          uf: "Selecione"
+        },
         cobranca: false,
         entrega: false
       },
-      editEndereco: {},
+      editEndereco: {
+        descricao: "",
+        tipo: "Selecione",
+        tipoLogradouro: "Selecione",
+        logradouro: "",
+        numero: "",
+        complemento: "",
+        bairro: "",
+        cidade:{
+          descricao: "",
+        },
+        estado: {
+          uf: "Selecione"
+        },
+        cobranca: false,
+        entrega: false
+      },
       novoCartao: {
         tipo: "Selecione",
         bandeira: "Selecione",
@@ -75,11 +97,29 @@ export default {
         this.detalheTransacoes = true;
        }
     },
+    cadastrarEndereco(){
+      this.clienteDetalhe.enderecos.push(this.novoEndereco);
+      this.$http.post(`https://localhost:5001/api/Cliente/NovoEndereco`, this.clienteDetalhe).then(res => res.json()).then(res => {
+        this.exibeRespostaEnderecoNovo = true;
+        this.$parent.concluirEditar();
+      }, res => {
+        this.respostaEndereco = res.body.retornoString;
+        this.exibeRespostaEnderecoNovoErro = true;
+      })
+    },
+    cancelarCadastroEndereco(){
+      this.novoEndereco.descricao = "";
+      this.novoEnderecotipo = "Selecione";
+      this.novoEndereco.tipoLogradouro = "Selecione";
+      this.novoEndereco.logradouro = "";
+      this.novoEndereco.numero = "";
+      this.novoEndereco.complemento = "";
+      this.novoEndereco.bairro = "";
+      this.novoEndereco.cidade = "";
+      this.novoEndereco.estado = "Selecione";
+    },
     editandoEndereco(endereco){
       this.editEndereco = endereco;
-    },
-    cadastrarEndereco(){
-      this.$parent.cadastrarEndereco(this.clienteDetalhe, this.novoEndereco);
     },
     cadastrarCartao(cliente_id, cartao){
       this.$parent.cadastrarCartao(cliente_id, cartao);
@@ -112,11 +152,14 @@ export default {
       var numero = []
       numero = cartaoNumero.split('');
       let numeroExibir = "Final ";
+      var novoNumero = []
       for(let i = numero.length-1; i > (numero.length - 5); i--)
       {
-        numeroExibir += numero[i];
+        novoNumero.push(numero[i]);
       }
-      return numeroExibir;
+      novoNumero = novoNumero.reverse();
+
+      return numeroExibir + novoNumero[0] + novoNumero[1] + novoNumero[2] + novoNumero[3];
     }
   },
 };
@@ -163,137 +206,6 @@ export default {
                   <p v-if="endereco.entrega" class="card-text pb-0 m-0"><b><u>Endereço de Entrega</u></b></p>
                   <p v-else class="card-text pb-0 m-0">&nbsp;</p><br>
                   <button class="btn btn-primary btn-sm" style="margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#editarEndereco" @click="editandoEndereco(endereco)">Editar</button>
-                  <div class="modal fade" id="editarEndereco" tabindex="-1" aria-labelledby="editarEnderecoLabel" aria-hidden="true">
-                    <div class="modal-dialog  modal-lg">
-                      <div class="modal-content">
-                        <div class="modal-header" style="color: white; background-color: rgba(10, 10, 10, 0.699)">
-                          <h5 class="modal-title" id="editarEnderecoLabel">Editar Endereço</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <form>
-                            <div class=" row pb-3">
-                              <div class="col-md-2">
-                                <label class="form-label">Tipo</label>
-                                <div class="dropdown">
-                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEnderecoTipo${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{editEndereco.tipo}}</button>
-                                  <ul class="dropdown-menu" :aria-labelledby="`editEnderecoTipo${clienteDetalhe.id}`">
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Casa'">Casa</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Apartamento'">Apartamento</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipo = 'Comércio'">Comércio</a></li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div class="col-md-4">
-                                <label class="form-label">Descrição</label>
-                                <input v-model="editEndereco.descricao" type="text" class="form-control form-control-sm">
-                              </div>
-                            </div>
-                            <div class="row pb-3">
-                              <div class="col-md-2">
-                                <label class="form-label">Logradouro</label>
-                                <div class="dropdown">
-                                  <button style="width: 110px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEnderecoTipoLogra${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.tipoLogradouro}}</button>
-                                  <ul class="dropdown-menu" :aria-labelledby="`editEnderecoTipoLogra${clienteDetalhe.id}`">
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Rua'">Rua</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Avenida'">Avenida</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Travessa'">Travessa</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Estrada'">Estrada</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Alameda'">Alameda</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Rodovia'">Rodovia</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.tipoLogradouro = 'Viela'">Viela</a></li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div class="col-md-5">
-                                <label class="form-label">&nbsp;</label>
-                                <input v-model="editEndereco.logradouro" type="text" class="form-control form-control-sm">
-                              </div>
-                              <div class="col-md-2">
-                                <label class="form-label">Número</label>
-                                <input v-model="editEndereco.numero" type="text" class="form-control form-control-sm">
-                              </div>
-                            </div>
-                            <div class="row pb-3">
-                              <div class="col-md-5">
-                                <label class="form-label">Complemento</label>
-                                <input v-model="editEndereco.complemento" type="text" class="form-control form-control-sm">
-                              </div>
-                              <div class="col-md-4">
-                                <label class="form-label">Bairro</label>
-                                <input v-model="editEndereco.bairro" type="text" class="form-control form-control-sm">
-                              </div>
-                            </div>
-                            <div class="row pb-3">
-                              <div class="col-md-4">
-                                <label class="form-label">Cidade</label>
-                                <input v-model="editEndereco.cidade" type="text" class="form-control form-control-sm">
-                              </div>
-                              <div class="col-md-2">
-                                <label class="form-label">Estado</label>
-                                <div class="dropdown">
-                                  <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" :id="`editEstado${clienteDetalhe.id}`" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
-                                  <ul class="dropdown-menu" :aria-labelledby="`editEstado${clienteDetalhe.id}`">
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AC'">AC</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AL'">AL</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AP'">AP</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'AM'">AM</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'BA'">BA</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'CE'">CE</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'DF'">DF</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'ES'">ES</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'GO'">GO</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'MA'">MA</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'MT'">MT</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'MS'">MS</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'MG'">MG</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'PA'">PA</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'PB'">PB</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'PR'">PR</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'PE'">PE</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'PI'">PI</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'RJ'">RJ</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'RN'">RN</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'RS'">RS</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'RO'">RO</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'RR'">RR</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'SC'">SC</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'SP'">SP</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'SE'">SE</a></li>
-                                    <li><a class="dropdown-item" href="#" @click="editEndereco.estado = 'TO'">TO</a></li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div class="col-md-3">
-                                <label class="form-label">CEP</label>
-                                <input v-model="editEndereco.cep" type="text" class="form-control form-control-sm">
-                              </div>
-                            </div>
-                            <div class="row pb-3">
-                              <div class="col-md-4">
-                                <div class="form-check">
-                                  <input v-model="editEndereco.cobranca" class="form-check-input" :id="`editCobranca${clienteDetalhe.id}`" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
-                                  <label class="form-check-label"> 
-                                    Endereço de Cobrança
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input v-model="editEndereco.entrega" class="form-check-input" :id="`editCobranca${clienteDetalhe.id}`" type="checkbox" :disabled="clienteDetalhe.enderecos.length == 1">
-                                  <label class="form-check-label">
-                                    Endereço de Entrega
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                        <div class="modal-footer">
-                          <button class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelarCadastroCliente()">Cancelar</button>
-                          <button class="btn btn-new" data-bs-dismiss="modal">Concluir</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                   <button v-if="clienteDetalhe.enderecos.length > 1" class="btn btn-danger btn-sm" @click="removerEndereco(clienteDetalhe.id, endereco)">Remover</button>
                 </div>
               </div>
@@ -306,14 +218,14 @@ export default {
                     <h5 class="modal-title" id="newEnderecoModalLabel">Novo Endereço</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div v-if="exibeRespostaNovo && respostaEndereco.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>Cliente Inserido com Sucesso!</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="respostaEndereco = []"></button>
+                  <div v-if="exibeRespostaEnderecoNovo && respostaEndereco.length == 0" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Endereço Inserido com Sucesso!</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>
-                  <div v-if="exibeResposta && respostaEndereco.length > 0" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Erro ao Cadastrar Cliente!</strong>
+                  <div v-if="exibeRespostaEnderecoNovoErro" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Erro ao Cadastrar Endereço!</strong>
                     <p v-for="resp in respostaEndereco" :key="resp">{{resp}}</p>
-                    <button to="/Clientes" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="alterado = true;"></button>
+                    <button to="/Clientes" type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>
                   <div class="modal-body">
                     <form>
@@ -372,12 +284,12 @@ export default {
                       <div class="row pb-3">
                         <div class="col-md-4">
                           <label class="form-label">Cidade</label>
-                          <input v-model="novoEndereco.cidade" type="text" class="form-control form-control-sm">
+                          <input v-model="novoEndereco.cidade.descricao" type="text" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-2">
                           <label class="form-label">Estado</label>
                           <div class="dropdown">
-                            <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="novoEnderecoEstado" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado}}</button>
+                            <button style="width: 85px;" class="btn btn-secondary btn-sm dropdown-toggle" id="novoEnderecoEstado" data-bs-toggle="dropdown" aria-expanded="false">{{novoEndereco.estado.uf}}</button>
                             <ul class="dropdown-menu" aria-labelledby="novoEnderecoEstado">
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AC'">AC</a></li>
                               <li><a class="dropdown-item" href="#" @click="novoEndereco.estado = 'AL'">AL</a></li>
@@ -563,26 +475,25 @@ export default {
 </template>
 
 <style scoped>
-.card-selector {
-  color: white;
-  background-color: rgba(10, 10, 10, 0.699);
-}
-.card-selector:hover {
-  cursor: pointer;
-}
-.card-selector-active {
-  cursor: pointer;
-  background-color: rgba(204, 204, 8, 0.712);
-  color: white;
-}
-.btn-new{
+  .card-selector {
+    color: white;
+    background-color: rgba(10, 10, 10, 0.699);
+  }
+  .card-selector:hover {
+    cursor: pointer;
+  }
+  .card-selector-active {
+    cursor: pointer;
+    background-color: rgba(204, 204, 8, 0.712);
+    color: white;
+  }
+  .btn-new{
     background-color: rgba(204, 204, 8, 0.712);
     color: white;
     border: 1px solid rgba(204, 204, 8, 0.712);
     border-radius: 5px;
   }
   .btn-new:hover{
-    background-color: white;
-    color: rgba(204, 204, 8, 0.712);
+    background-color: rgba(199, 199, 10, 0.836);
   }
 </style>

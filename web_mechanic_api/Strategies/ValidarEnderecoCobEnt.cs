@@ -9,11 +9,21 @@ namespace web_mechanic_api.Strategies
   {
     public EntidadeDominio Processar(EntidadeDominio entidade)
     {
-      Cliente cliente = (Cliente)entidade;
+      Endereco endereco = (Endereco)entidade;
+      List<EntidadeDominio> retornoEndereco = new List<EntidadeDominio>();
+      EnderecoDal endDal = new EnderecoDal();
+      string filtro = "cliente_id = " + endereco.cliente_id;
+      string[] filtros = {filtro};
+      retornoEndereco = endDal.Pesquisar(filtros);
+      List<Endereco> enderecosCliente = new List<Endereco>();
+      foreach(EntidadeDominio element in retornoEndereco)
+      {
+        enderecosCliente.Add((Endereco)element);
+      }
       List<string> erroCobrancaEntrega = new List<string>();
       bool validaCobranca = false;
       bool validaEntrega = false;
-      foreach(Endereco enderecoCliente in cliente.enderecos)
+      foreach(Endereco enderecoCliente in enderecosCliente)
       {
         if(enderecoCliente.cobranca)
         {
@@ -39,7 +49,7 @@ namespace web_mechanic_api.Strategies
       }
       else
       {
-        return cliente;
+        return endereco;
       }
     }
   }

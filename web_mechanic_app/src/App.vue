@@ -14,7 +14,7 @@ export default {
 <template>
   <div id="app">
     <Headerbar />
-   <router-view></router-view>
+   <router-view :key="$route.fullPath"></router-view>
     <FooterBar />
   </div>
 </template>

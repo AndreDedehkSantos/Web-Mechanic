@@ -12,5 +12,6 @@ namespace web_mechanic_api.Models
         public string dataValidade { get; set; }
         public string nomeImpresso { get; set; }
         public bool preferencial { get; set; }
+        public int cliente_id {get; set; }
     }
 }

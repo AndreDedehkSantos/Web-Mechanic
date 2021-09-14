@@ -9,12 +9,13 @@ namespace web_mechanic_api.Strategies
   {
     public EntidadeDominio Processar(EntidadeDominio entidade)
     {
-      Cliente cliente = (Cliente)entidade;
-      Cartao cartao = cliente.cartoes[cliente.cartoes.Count - 1];
+      Cartao cartao = (Cartao)entidade;
+      List<EntidadeDominio> retornoPesquisa = new List<EntidadeDominio>();
+      string filtro = "cliente_id = " + cartao.cliente_id;
+      string[] filtros = {filtro};
       CartaoDal cartaoDal = new CartaoDal();
-      string[] filtros = {"numero = " + cartao.numero};
-      List<EntidadeDominio> resultadoPesquisa = cartaoDal.Pesquisar(filtros);
-      if(resultadoPesquisa.Count > 0)
+      retornoPesquisa = cartaoDal.Pesquisar(filtros);
+      if(retornoPesquisa.Count > 0)
       {
         List<string> erroExistencia = new List<string>();
         erroExistencia.Add("Cartão já cadastrado");
@@ -23,7 +24,7 @@ namespace web_mechanic_api.Strategies
       }
       else
       {
-        return cliente;
+        return cartao;
       }
     }
   }

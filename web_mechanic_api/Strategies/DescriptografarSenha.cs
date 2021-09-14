@@ -17,10 +17,9 @@ namespace web_mechanic_api.Strategies
         int caracterCript = caracter - senha.Length;
         senhaCript += char.ConvertFromUtf32(caracterCript);
       }
-      List<string> retoroSenha = new List<string>();
-      retoroSenha.Add(senhaCript);
-      Retorno retorno = new Retorno(retoroSenha);
-      return retorno;
+
+      cliente.senhas[0] = senhaCript;
+      return cliente;
     }
   }
 }

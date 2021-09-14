@@ -9,12 +9,12 @@ namespace web_mechanic_api.Strategies
   {
     public EntidadeDominio Processar(EntidadeDominio entidade)
     {
-      Cliente cliente = (Cliente)entidade;
-      Endereco endereco = cliente.enderecos[cliente.enderecos.Count - 1];
+      Endereco endereco = (Endereco)entidade;
       List<string> erroExistencia = new List<string>();
-      EnderecoDal enderecoDal = new EnderecoDal();
-      string[] filtros = {"cep = " + endereco.cep, "numero = " + endereco.numero, "complemento = " + endereco.complemento};
-      List<EntidadeDominio> resultadoPesquisa = enderecoDal.Pesquisar(filtros);
+      List<EntidadeDominio> retornoEndereco = new List<EntidadeDominio>();
+      EnderecoDal endDal = new EnderecoDal();
+      string[] filtros = {"cliente_id = " + endereco.cliente_id, "cep = " + endereco.cep, "numero = " + endereco.numero, "complemento = " + endereco.complemento};
+      List<EntidadeDominio> resultadoPesquisa = endDal.Pesquisar(filtros);
       if(resultadoPesquisa.Count > 0)
       {
         erroExistencia.Add("Endereço já cadastrado");
@@ -23,7 +23,7 @@ namespace web_mechanic_api.Strategies
       }
       else
       {
-        return cliente;
+        return endereco;
       }
     }
   }

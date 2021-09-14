@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using web_mechanic_api.Models;
 using web_mechanic_api.ViewModels;
 
@@ -17,13 +18,14 @@ namespace web_mechanic_api.Strategies
         {
           erroDadosCliente.Add("Nome é um Campo Obrigatório!");
         }
+        bool numeros = Regex.IsMatch(cliente.telefone.ddd, (@"[^0-9]"));
         if(string.IsNullOrEmpty(cliente.cpf))
         {
           erroDadosCliente.Add("CPF é um Campo Obrigatório!");
         }
         else
         {
-          if(cliente.cpf.Length != 11)
+          if(cliente.cpf.Length != 11 || numeros)
           {
             erroDadosCliente.Add("CPF Inválido!");
           }

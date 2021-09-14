@@ -80,8 +80,7 @@ namespace web_mechanic_api.Dal
       var cmd = new MySqlCommand();
       try
       {
-        Cliente cliente = (Cliente)entidade;
-        Endereco endereco = cliente.enderecos[0];
+        Endereco endereco = (Endereco)entidade;
         connection.Open();
         cmd.Connection = connection;
         cmd.CommandText = EnderecoQueries.cadastar;
@@ -119,9 +118,9 @@ namespace web_mechanic_api.Dal
         }
         cmd.Parameters.AddWithValue("@cidade", endereco.cidade.descricao);
         cmd.Parameters.AddWithValue("@estado", endereco.estado.uf);
-        cmd.Parameters.AddWithValue("@cliente_id", cliente.id);
+        cmd.Parameters.AddWithValue("@cliente_id", endereco.cliente_id);
         cmd.ExecuteNonQuery();
-        return cliente;
+        return endereco;
       }
 
       catch(Exception excessao)

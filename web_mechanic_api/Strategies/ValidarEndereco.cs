@@ -9,8 +9,7 @@ namespace web_mechanic_api.Strategies
     {
       public EntidadeDominio Processar(EntidadeDominio entidade)
       {
-        Cliente cliente = (Cliente)entidade;
-        Endereco endereco = cliente.enderecos[0];
+        Endereco endereco = (Endereco)entidade;
         List<string> erroEndereco = new List<string>();
 
         string[] tiposEndereco = {"Casa", "Apartamento", "Comércio"};

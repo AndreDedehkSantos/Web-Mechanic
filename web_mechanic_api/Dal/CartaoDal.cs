@@ -21,8 +21,7 @@ namespace web_mechanic_api.Dal
       var cmd = new MySqlCommand();
       try
       {
-        Cliente cliente = (Cliente)entidade;
-        Cartao cartao = cliente.cartoes[0];
+        Cartao cartao = (Cartao)entidade;
         connection.Open();
         cmd.Connection = connection;
         cmd.CommandText = CartaoQueries.cadastrar;
@@ -41,8 +40,9 @@ namespace web_mechanic_api.Dal
         {
           cmd.Parameters.AddWithValue("@preferencial", 0);
         }
+        cmd.Parameters.AddWithValue("@cliente_id", cartao.cliente_id);
         cmd.ExecuteNonQuery();
-        return cliente;
+        return cartao;
 
       }
       catch (Exception excessao)

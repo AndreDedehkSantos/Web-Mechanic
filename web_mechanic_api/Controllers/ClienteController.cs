@@ -35,12 +35,19 @@ namespace web_mechanic_api.Controllers
           }
         }
         
-        [HttpGet("filtrar")]
-        public IActionResult Pesquisar(string[] filtros)
+        [HttpPost("Pesquisar")]
+        public IActionResult Pesquisar(Filtros filtros)
         {
           try
           {
-            return Ok();
+            string[] _filtros = new string[filtros.filtroString.Count];
+            for(int i = 0; i < filtros.filtroString.Count; i++)
+            {
+              _filtros[i] = filtros.filtroString[i];
+            }
+            Fachada fachada = new Fachada();
+            List<EntidadeDominio> resposta = fachada.Pesquisar(_filtros);
+            return Ok(resposta);
           }
           catch (Exception excessao)
           {
@@ -53,8 +60,8 @@ namespace web_mechanic_api.Controllers
         {
           try
           {
-             Fachada fachada = new Fachada();
-            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente);
+            Fachada fachada = new Fachada();
+            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente, cliente.id);
             if(clienteRetorno.GetType() == typeof(Cliente))
             {
               clienteRetorno = (Cliente)clienteRetorno;
@@ -77,20 +84,18 @@ namespace web_mechanic_api.Controllers
         {
           try
           {
-            // ClienteDal clienteDal = new ClienteDal();
-            // EntidadeDominio clienteRetorno = clienteDal.Cadastrar(cliente);
-            // if(clienteRetorno.GetType() == typeof(Cliente))
-            // {
-            //   clienteRetorno = (Cliente)clienteRetorno;
-            //   return Ok(clienteRetorno);
-            // }
-            // else
-            // {
-            //   Retorno retorno = (Retorno)clienteRetorno;
-            //   List<Retorno> listaRetorno = new List<Retorno>();
-            //   listaRetorno.Add(retorno);
-              return BadRequest();
-            //}
+            Fachada fachada = new Fachada();
+            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente.enderecos[cliente.enderecos.Count], cliente.id);
+            if(clienteRetorno.GetType() == typeof(Cliente))
+            {
+              clienteRetorno = (Cliente)clienteRetorno;
+              return Ok(clienteRetorno);
+            }
+            else
+            {
+              Retorno retorno = (Retorno)clienteRetorno;
+              return BadRequest(retorno);
+            }
           }
           catch (Exception excessao)
           {
@@ -129,9 +134,44 @@ namespace web_mechanic_api.Controllers
         {
           try
           {
-            ClienteDal clienteDal = new ClienteDal();
-            clienteDal.Alterar(cliente);
-            return Ok();
+            Fachada fachada = new Fachada();
+            EntidadeDominio clienteRetorno = fachada.Alterar(cliente);
+            if(clienteRetorno.GetType() == typeof(Cliente))
+            {
+              clienteRetorno = (Cliente)clienteRetorno;
+              return Ok(clienteRetorno);
+            }
+            else
+            {
+              Retorno retorno = (Retorno)clienteRetorno;
+              Console.WriteLine(retorno.retornoString);
+              return BadRequest(retorno);
+            }
+          }
+          catch (Exception excessao)
+          {
+            return this.StatusCode(StatusCodes.Status500InternalServerError, excessao);
+          }
+        }
+
+        [HttpPut("AlterarSenhaCliente")]
+        public IActionResult AlterarSenhaCliente(Cliente cliente)
+        {
+          try
+          {
+            Fachada fachada = new Fachada();
+            EntidadeDominio clienteRetorno = fachada.AlterarSenha(cliente);
+            if(clienteRetorno.GetType() == typeof(Cliente))
+            {
+              clienteRetorno = (Cliente)clienteRetorno;
+              return Ok(clienteRetorno);
+            }
+            else
+            {
+              Retorno retorno = (Retorno)clienteRetorno;
+              Console.WriteLine(retorno.retornoString);
+              return BadRequest(retorno);
+            }
           }
           catch (Exception excessao)
           {
