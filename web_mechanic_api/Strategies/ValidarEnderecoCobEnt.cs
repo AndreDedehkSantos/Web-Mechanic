@@ -23,34 +23,38 @@ namespace web_mechanic_api.Strategies
       List<string> erroCobrancaEntrega = new List<string>();
       bool validaCobranca = false;
       bool validaEntrega = false;
-      foreach(Endereco enderecoCliente in enderecosCliente)
+      if(enderecosCliente.Count > 1)
       {
-        if(enderecoCliente.cobranca)
+        foreach(Endereco enderecoCliente in enderecosCliente)
         {
-          validaCobranca = true;
+          if(enderecoCliente.cobranca)
+          {
+            validaCobranca = true;
+          }
+          if(enderecoCliente.entrega)
+          {
+            validaEntrega = true;
+          }
         }
-        if(enderecoCliente.entrega)
+        if(!validaCobranca)
         {
-          validaEntrega = true;
+          erroCobrancaEntrega.Add("É Necessário no Mínimo um Endereço de Combranca!");
+        }
+        if(!validaEntrega)
+        {
+          erroCobrancaEntrega.Add("É Necessário no Mínimo um Endereço de Entrega!");
+        }
+        if(erroCobrancaEntrega.Count > 0)
+        {
+          Retorno retorno = new Retorno(erroCobrancaEntrega);
+          return retorno;
+        }
+        else
+        {
+          return endereco;
         }
       }
-      if(!validaCobranca)
-      {
-        erroCobrancaEntrega.Add("É Necessário no Mínimo um Endereço de Combranca!");
-      }
-       if(!validaEntrega)
-      {
-        erroCobrancaEntrega.Add("É Necessário no Mínimo um Endereço de Entrega!");
-      }
-      if(erroCobrancaEntrega.Count > 0)
-      {
-        Retorno retorno = new Retorno(erroCobrancaEntrega);
-        return retorno;
-      }
-      else
-      {
-        return endereco;
-      }
+      return endereco;
     }
   }
 }

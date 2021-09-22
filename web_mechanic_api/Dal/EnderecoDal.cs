@@ -31,14 +31,8 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@tipoLogradouro", endereco.tipoLogradouro);
         cmd.Parameters.AddWithValue("@logradouro", endereco.logradouro);
         cmd.Parameters.AddWithValue("@numero", endereco.numero);
-        if(endereco.complemento == null)
-        {
-          cmd.Parameters.AddWithValue("@complemento", "");
-        }
-        else
-        {
-          cmd.Parameters.AddWithValue("@complemento", endereco.complemento);
-        }
+        Console.WriteLine(endereco.complemento);
+        cmd.Parameters.AddWithValue("@complemento", endereco.complemento);
         cmd.Parameters.AddWithValue("@bairro", endereco.bairro);
         cmd.Parameters.AddWithValue("@cep", endereco.cep);
         if(endereco.cobranca)
@@ -90,14 +84,7 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@tipoLogradouro", endereco.tipoLogradouro);
         cmd.Parameters.AddWithValue("@logradouro", endereco.logradouro);
         cmd.Parameters.AddWithValue("@numero", endereco.numero);
-        if(endereco.complemento == null)
-        {
-          cmd.Parameters.AddWithValue("@complemento", "");
-        }
-        else
-        {
-          cmd.Parameters.AddWithValue("@complemento", endereco.complemento);
-        }
+        cmd.Parameters.AddWithValue("@complemento", endereco.complemento);
         cmd.Parameters.AddWithValue("@bairro", endereco.bairro);
         cmd.Parameters.AddWithValue("@cep", endereco.cep);
         if(endereco.cobranca)

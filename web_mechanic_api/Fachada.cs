@@ -45,7 +45,7 @@ namespace web_mechanic_api
       cartaoStrategies.Add(validarCartaoPref);
 
     }
-    public EntidadeDominio Cadastrar(EntidadeDominio entidade, int id)
+    public EntidadeDominio Cadastrar(EntidadeDominio entidade)
     {
       try
       {
@@ -72,10 +72,21 @@ namespace web_mechanic_api
               }
             }
             ClienteDal clienteDal = new ClienteDal();
-            Cliente clienteRetorno = new Cliente();
             clienteDal.Cadastrar(cliente);
             return cliente;
 
+          case "Endereco": 
+            Endereco endereco = (Endereco)entidade;
+            validacoes.Clear();
+            foreach(IStrategy strategy in cadastrarEnderecoStrategies)
+            {
+               EntidadeDominio validacao = strategy.Processar(endereco);
+              if(validacao.GetType() == typeof(Retorno))
+              {
+                return validacao;
+              }
+            }
+            return endereco;
 
           default:
             return null;

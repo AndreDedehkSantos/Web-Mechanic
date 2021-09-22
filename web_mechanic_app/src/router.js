@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Index from './components/Index';
-import Clientes from './components/NewCliente';
+import Clientes from './components/ClientesAdm';
 
 Vue.use(Router);
 

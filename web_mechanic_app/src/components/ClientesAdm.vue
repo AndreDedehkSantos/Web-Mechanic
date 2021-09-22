@@ -39,7 +39,8 @@
             uf: "Selecione"
           },
           cobranca: true,
-          entrega: true
+          entrega: true,
+          cliente_id : 0
         },
         novoCliente: {
           id: 0,
@@ -62,7 +63,7 @@
         },
       }
     },
-    mounted() {
+    mounted(){
       this.listarClientes();
     },
     methods: {
@@ -77,13 +78,14 @@
             var dataEdit = aux1[4] + aux1[5] + aux1[6] + aux1[7] + "-" + aux1[2] + aux1[3] + "-" + aux1[0] + aux1[1];
             element.dataNascimento = dataEdit;
           });
-        });
+        }, res => {console.log(res)});
       },
       detalhesCliente(cliente){
         window.location.href = "#detalheDiv"
         this.$refs.detalheClienteView.detalhesCliente(cliente);
       },
       cadastrarCliente(){
+        this.novoEndereco.cliente_id = 0;
         this.novoCliente.enderecos.push(this.novoEndereco);
         this.novoCliente.id = 0;
         if(this.novoCliente.dataNascimento != ""){
@@ -101,6 +103,7 @@
           this.clientes.push(res.cliente);
           this.detalhesCliente(res.cliente);
         }, res => {
+          console.log(res);
           this.resposta = res.body.retornoString;
           this.exibeRespostaNovoErro = true;
         })
@@ -223,7 +226,7 @@
                     </div>
                   </div>  
                   <div class="row pb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                       <label class="form-label">Data de Nascimento</label>
                       <b-form-datepicker v-model="novoCliente.dataNascimento" id="example-datepickerNovo" class="mb-2"></b-form-datepicker>
                     </div>

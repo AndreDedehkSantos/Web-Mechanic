@@ -26,7 +26,6 @@ namespace web_mechanic_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddCors();
 
 
         }
@@ -36,7 +35,9 @@ namespace web_mechanic_api
         {
             if (env.IsDevelopment())
             {
+                app.UseCors();
                 app.UseDeveloperExceptionPage();
+                
             }
             else
             {
@@ -44,8 +45,8 @@ namespace web_mechanic_api
                 app.UseHsts();
             }
 
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseHttpsRedirection();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc();
         }
     }

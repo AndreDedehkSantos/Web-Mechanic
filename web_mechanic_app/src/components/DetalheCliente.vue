@@ -99,7 +99,8 @@ export default {
     },
     cadastrarEndereco(){
       this.clienteDetalhe.enderecos.push(this.novoEndereco);
-      this.$http.post(`https://localhost:5001/api/Cliente/NovoEndereco`, this.clienteDetalhe).then(res => res.json()).then(res => {
+      this.$http.post(`https://localhost:5001/api/Cliente/NovoEndereco`, this.novoEndereco).then(res => res.json()).then(res => {
+        this.clienteDetalhe.enderecos.push(res.endereco);
         this.exibeRespostaEnderecoNovo = true;
         this.$parent.concluirEditar();
       }, res => {

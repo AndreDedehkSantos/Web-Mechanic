@@ -82,6 +82,7 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@ranking", cliente.ranking);
         cmd.Parameters.AddWithValue("@status_cliente", 1);
         cliente.id = Convert.ToInt32(cmd.ExecuteScalar());
+        cliente.enderecos[0].cliente_id = cliente.id;
         EnderecoDal enderecoDal = new EnderecoDal();
         enderecoDal.Cadastrar(cliente.enderecos[0]);
         return cliente;
@@ -219,14 +220,18 @@ namespace web_mechanic_api.Dal
           List<Endereco> enderecos = new List<Endereco>();
           foreach(EntidadeDominio endereco in enderecoEntidade)
           {
-            enderecos.Add((Endereco)endereco);
+            Endereco end = (Endereco)endereco;
+            end.cliente_id = cliente.id;
+            enderecos.Add((Endereco)end);
           }
           CartaoDal cartaoDal = new CartaoDal();
           List<EntidadeDominio> cartaoEntidade = cartaoDal.Pesquisar(filtros);
           List<Cartao> cartoes = new List<Cartao>();
           foreach(EntidadeDominio cartao in cartaoEntidade)
           {
-            cartoes.Add((Cartao)cartao);
+            Cartao cart = (Cartao)cartao;
+            cart.cliente_id = cliente.id;
+            cartoes.Add((Cartao)cart);
           }
           cliente.enderecos = enderecos;
           cliente.cartoes = cartoes;

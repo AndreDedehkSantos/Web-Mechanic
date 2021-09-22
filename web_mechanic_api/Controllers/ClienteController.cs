@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using web_mechanic_api.Dal;
@@ -61,7 +62,7 @@ namespace web_mechanic_api.Controllers
           try
           {
             Fachada fachada = new Fachada();
-            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente, cliente.id);
+            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente);
             if(clienteRetorno.GetType() == typeof(Cliente))
             {
               clienteRetorno = (Cliente)clienteRetorno;
@@ -80,12 +81,12 @@ namespace web_mechanic_api.Controllers
         }
 
         [HttpPost("NovoEndereco")]
-        public IActionResult NovoEndereco(Cliente cliente)
+        public IActionResult NovoEndereco(Endereco endereco)
         {
           try
           {
             Fachada fachada = new Fachada();
-            EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente.enderecos[cliente.enderecos.Count], cliente.id);
+            EntidadeDominio clienteRetorno = fachada.Cadastrar(endereco);
             if(clienteRetorno.GetType() == typeof(Cliente))
             {
               clienteRetorno = (Cliente)clienteRetorno;
