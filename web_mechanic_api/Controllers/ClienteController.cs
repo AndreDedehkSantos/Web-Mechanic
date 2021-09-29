@@ -62,6 +62,7 @@ namespace web_mechanic_api.Controllers
           try
           {
             Fachada fachada = new Fachada();
+            Console.WriteLine(cliente.nome);
             EntidadeDominio clienteRetorno = fachada.Cadastrar(cliente);
             if(clienteRetorno.GetType() == typeof(Cliente))
             {

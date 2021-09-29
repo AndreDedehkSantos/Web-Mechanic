@@ -13,7 +13,8 @@ namespace web_mechanic_api.Strategies
       List<string> erroExistencia = new List<string>();
       List<EntidadeDominio> retornoEndereco = new List<EntidadeDominio>();
       EnderecoDal endDal = new EnderecoDal();
-      string[] filtros = {"cliente_id = " + endereco.cliente_id, "cep = " + endereco.cep, "numero = " + endereco.numero, "complemento = " + endereco.complemento};
+      
+      string[] filtros = {"cliente_id = " + endereco.cliente_id, "cep = '" + endereco.cep + "'", "numero = '" + endereco.numero + "'", "complemento = '" + endereco.complemento + "'"};
       List<EntidadeDominio> resultadoPesquisa = endDal.Pesquisar(filtros);
       if(resultadoPesquisa.Count > 0)
       {

@@ -100,6 +100,7 @@
         this.novoCliente.senhas.push(this.confirmarSenha);
         this.$http.post('https://localhost:5001/api/Cliente/NovoCliente', this.novoCliente).then(res => res.json()).then(res => {
           this.exibeRespostaNovo = true;
+          console.log(res);
           this.clientes.push(res.cliente);
           this.detalhesCliente(res.cliente);
         }, res => {

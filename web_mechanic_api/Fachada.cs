@@ -55,16 +55,23 @@ namespace web_mechanic_api
           case "Cliente":
             Cliente cliente = (Cliente)entidade;
             validacoes.Clear();
+            Console.WriteLine("Aqui Fachada!");
+            int i = 0;
             foreach(IStrategy strategy in cadastrarClienteStrategies)
             {
               EntidadeDominio validacao = strategy.Processar(cliente);
+              i++;
+              Console.WriteLine("Valida " + i);
               if(validacao.GetType() == typeof(Retorno))
               {
                 return validacao;
               }
             }
+            i = 0;
             foreach(IStrategy strategy in cadastrarEnderecoStrategies)
             {
+              i++;
+              Console.WriteLine("Valida " + i);
               EntidadeDominio validacao = strategy.Processar(cliente.enderecos[0]);
               if(validacao.GetType() == typeof(Retorno))
               {

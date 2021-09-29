@@ -64,12 +64,15 @@ namespace web_mechanic_api.Dal
     {
       Cliente cliente = (Cliente)entidade;
       MySqlCommand cmd = new MySqlCommand();
+      Console.WriteLine("Aqui Ok primeiro");
       try
       {
+        Console.WriteLine("Aqui Ok 1");
         connection.Open();
         cmd.Connection = connection;
         cmd.CommandText = ClienteQueries.cadastar;
         cmd.Prepare();
+        Console.WriteLine("Aqui Ok 2");
         cmd.Parameters.AddWithValue("@nome", cliente.nome);
         cmd.Parameters.AddWithValue("@dataNascimento", cliente.dataNascimento);
         cmd.Parameters.AddWithValue("@genero", cliente.genero);
@@ -82,6 +85,7 @@ namespace web_mechanic_api.Dal
         cmd.Parameters.AddWithValue("@ranking", cliente.ranking);
         cmd.Parameters.AddWithValue("@status_cliente", 1);
         cliente.id = Convert.ToInt32(cmd.ExecuteScalar());
+        Console.WriteLine("Cliente OK!");
         cliente.enderecos[0].cliente_id = cliente.id;
         EnderecoDal enderecoDal = new EnderecoDal();
         enderecoDal.Cadastrar(cliente.enderecos[0]);

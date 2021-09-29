@@ -167,6 +167,7 @@ namespace web_mechanic_api.Dal
           }
         }
         query += ");";
+        Console.WriteLine(query);
         cmd.CommandText = query;
         var resultado = cmd.ExecuteReader();
         List<EntidadeDominio> enderecos = new List<EntidadeDominio>();
